@@ -1,0 +1,1166 @@
+<?xml version='1.0' encoding='utf-8' ?>
+
+<!-- build 20241.24.0425.1340                               -->
+<workbook original-version='18.1' source-build='2024.1.2 (20241.24.0425.1340)' source-platform='win' version='18.1' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <document-format-change-manifest>
+    <_.fcp.AccessibleZoneTabOrder.true...AccessibleZoneTabOrder />
+    <_.fcp.AnimationOnByDefault.true...AnimationOnByDefault />
+    <AutoCreateAndUpdateDSDPhoneLayouts />
+    <_.fcp.MarkAnimation.true...MarkAnimation />
+    <_.fcp.ObjectModelEncapsulateLegacy.true...ObjectModelEncapsulateLegacy />
+    <_.fcp.ObjectModelTableType.true...ObjectModelTableType />
+    <_.fcp.SchemaViewerObjectModel.true...SchemaViewerObjectModel />
+    <SetMembershipControl />
+    <SheetIdentifierTracking />
+    <SortTagCleanup />
+    <WindowsPersistSimpleIdentifiers />
+  </document-format-change-manifest>
+  <preferences>
+    <preference name='ui.encoding.shelf.height' value='24' />
+    <preference name='ui.shelf.height' value='26' />
+  </preferences>
+  <_.fcp.AnimationOnByDefault.false...style>
+    <_.fcp.AnimationOnByDefault.false..._.fcp.MarkAnimation.true...style-rule element='animation'>
+      <_.fcp.AnimationOnByDefault.false...format attr='animation-on' value='ao-on' />
+    </_.fcp.AnimationOnByDefault.false..._.fcp.MarkAnimation.true...style-rule>
+  </_.fcp.AnimationOnByDefault.false...style>
+  <datasources>
+    <datasource caption='midwest' inline='true' name='federated.0ldxkqm0mcgdbs11ibhjo1soubry' version='18.1'>
+      <connection class='federated'>
+        <named-connections>
+          <named-connection caption='midwest' name='textscan.1lz8uuv0bp3j7q0zu5s4b1jqdeeg'>
+            <connection class='textscan' directory='C:/Users/mwalc/Documents' filename='midwest.csv' password='' server='' />
+          </named-connection>
+        </named-connections>
+        <_.fcp.ObjectModelEncapsulateLegacy.false...relation connection='textscan.1lz8uuv0bp3j7q0zu5s4b1jqdeeg' name='midwest.csv' table='[midwest#csv]' type='table'>
+          <columns character-set='UTF-8' header='yes' locale='en_US' separator=','>
+            <column datatype='integer' name='PID' ordinal='0' />
+            <column datatype='string' name='county' ordinal='1' />
+            <column datatype='string' name='state' ordinal='2' />
+            <column datatype='real' name='area' ordinal='3' />
+            <column datatype='integer' name='poptotal' ordinal='4' />
+            <column datatype='real' name='popdensity' ordinal='5' />
+            <column datatype='integer' name='popwhite' ordinal='6' />
+            <column datatype='integer' name='popblack' ordinal='7' />
+            <column datatype='integer' name='popamerindian' ordinal='8' />
+            <column datatype='integer' name='popasian' ordinal='9' />
+            <column datatype='integer' name='popother' ordinal='10' />
+            <column datatype='real' name='percwhite' ordinal='11' />
+            <column datatype='real' name='percblack' ordinal='12' />
+            <column datatype='real' name='percamerindan' ordinal='13' />
+            <column datatype='real' name='percasian' ordinal='14' />
+            <column datatype='real' name='percother' ordinal='15' />
+            <column datatype='integer' name='popadults' ordinal='16' />
+            <column datatype='real' name='perchsd' ordinal='17' />
+            <column datatype='real' name='percollege' ordinal='18' />
+            <column datatype='real' name='percprof' ordinal='19' />
+            <column datatype='integer' name='poppovertyknown' ordinal='20' />
+            <column datatype='real' name='percpovertyknown' ordinal='21' />
+            <column datatype='real' name='percbelowpoverty' ordinal='22' />
+            <column datatype='real' name='percchildbelowpovert' ordinal='23' />
+            <column datatype='real' name='percadultpoverty' ordinal='24' />
+            <column datatype='real' name='percelderlypoverty' ordinal='25' />
+            <column datatype='integer' name='inmetro' ordinal='26' />
+            <column datatype='string' name='category' ordinal='27' />
+          </columns>
+        </_.fcp.ObjectModelEncapsulateLegacy.false...relation>
+        <_.fcp.ObjectModelEncapsulateLegacy.true...relation connection='textscan.1lz8uuv0bp3j7q0zu5s4b1jqdeeg' name='midwest.csv' table='[midwest#csv]' type='table'>
+          <columns character-set='UTF-8' header='yes' locale='en_US' separator=','>
+            <column datatype='integer' name='PID' ordinal='0' />
+            <column datatype='string' name='county' ordinal='1' />
+            <column datatype='string' name='state' ordinal='2' />
+            <column datatype='real' name='area' ordinal='3' />
+            <column datatype='integer' name='poptotal' ordinal='4' />
+            <column datatype='real' name='popdensity' ordinal='5' />
+            <column datatype='integer' name='popwhite' ordinal='6' />
+            <column datatype='integer' name='popblack' ordinal='7' />
+            <column datatype='integer' name='popamerindian' ordinal='8' />
+            <column datatype='integer' name='popasian' ordinal='9' />
+            <column datatype='integer' name='popother' ordinal='10' />
+            <column datatype='real' name='percwhite' ordinal='11' />
+            <column datatype='real' name='percblack' ordinal='12' />
+            <column datatype='real' name='percamerindan' ordinal='13' />
+            <column datatype='real' name='percasian' ordinal='14' />
+            <column datatype='real' name='percother' ordinal='15' />
+            <column datatype='integer' name='popadults' ordinal='16' />
+            <column datatype='real' name='perchsd' ordinal='17' />
+            <column datatype='real' name='percollege' ordinal='18' />
+            <column datatype='real' name='percprof' ordinal='19' />
+            <column datatype='integer' name='poppovertyknown' ordinal='20' />
+            <column datatype='real' name='percpovertyknown' ordinal='21' />
+            <column datatype='real' name='percbelowpoverty' ordinal='22' />
+            <column datatype='real' name='percchildbelowpovert' ordinal='23' />
+            <column datatype='real' name='percadultpoverty' ordinal='24' />
+            <column datatype='real' name='percelderlypoverty' ordinal='25' />
+            <column datatype='integer' name='inmetro' ordinal='26' />
+            <column datatype='string' name='category' ordinal='27' />
+          </columns>
+        </_.fcp.ObjectModelEncapsulateLegacy.true...relation>
+        <metadata-records>
+          <metadata-record class='capability'>
+            <remote-name />
+            <remote-type>0</remote-type>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias />
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='character-set'>&quot;UTF-8&quot;</attribute>
+              <attribute datatype='string' name='collation'>&quot;en_US&quot;</attribute>
+              <attribute datatype='string' name='field-delimiter'>&quot;,&quot;</attribute>
+              <attribute datatype='string' name='header-row'>&quot;true&quot;</attribute>
+              <attribute datatype='string' name='locale'>&quot;en_US&quot;</attribute>
+              <attribute datatype='string' name='single-char'>&quot;&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>PID</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[PID]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>PID</remote-alias>
+            <ordinal>0</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>county</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[county]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>county</remote-alias>
+            <ordinal>1</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RUS' />
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>state</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[state]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>state</remote-alias>
+            <ordinal>2</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RUS' />
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>area</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[area]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>area</remote-alias>
+            <ordinal>3</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>poptotal</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[poptotal]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>poptotal</remote-alias>
+            <ordinal>4</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>popdensity</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[popdensity]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>popdensity</remote-alias>
+            <ordinal>5</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>popwhite</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[popwhite]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>popwhite</remote-alias>
+            <ordinal>6</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>popblack</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[popblack]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>popblack</remote-alias>
+            <ordinal>7</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>popamerindian</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[popamerindian]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>popamerindian</remote-alias>
+            <ordinal>8</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>popasian</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[popasian]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>popasian</remote-alias>
+            <ordinal>9</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>popother</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[popother]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>popother</remote-alias>
+            <ordinal>10</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>percwhite</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[percwhite]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>percwhite</remote-alias>
+            <ordinal>11</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>percblack</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[percblack]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>percblack</remote-alias>
+            <ordinal>12</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>percamerindan</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[percamerindan]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>percamerindan</remote-alias>
+            <ordinal>13</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>percasian</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[percasian]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>percasian</remote-alias>
+            <ordinal>14</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>percother</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[percother]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>percother</remote-alias>
+            <ordinal>15</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>popadults</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[popadults]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>popadults</remote-alias>
+            <ordinal>16</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>perchsd</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[perchsd]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>perchsd</remote-alias>
+            <ordinal>17</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>percollege</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[percollege]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>percollege</remote-alias>
+            <ordinal>18</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>percprof</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[percprof]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>percprof</remote-alias>
+            <ordinal>19</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>poppovertyknown</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[poppovertyknown]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>poppovertyknown</remote-alias>
+            <ordinal>20</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>percpovertyknown</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[percpovertyknown]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>percpovertyknown</remote-alias>
+            <ordinal>21</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>percbelowpoverty</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[percbelowpoverty]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>percbelowpoverty</remote-alias>
+            <ordinal>22</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>percchildbelowpovert</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[percchildbelowpovert]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>percchildbelowpovert</remote-alias>
+            <ordinal>23</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>percadultpoverty</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[percadultpoverty]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>percadultpoverty</remote-alias>
+            <ordinal>24</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>percelderlypoverty</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[percelderlypoverty]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>percelderlypoverty</remote-alias>
+            <ordinal>25</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>inmetro</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[inmetro]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>inmetro</remote-alias>
+            <ordinal>26</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>category</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[category]</local-name>
+            <parent-name>[midwest.csv]</parent-name>
+            <remote-alias>category</remote-alias>
+            <ordinal>27</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RUS' />
+            <_.fcp.ObjectModelEncapsulateLegacy.true...object-id>[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]</_.fcp.ObjectModelEncapsulateLegacy.true...object-id>
+          </metadata-record>
+        </metadata-records>
+      </connection>
+      <aliases enabled='yes' />
+      <_.fcp.ObjectModelTableType.true...column caption='midwest.csv' datatype='table' name='[__tableau_internal_object_id__].[midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB]' role='measure' type='quantitative' />
+      <column caption='Area' datatype='real' name='[area]' role='measure' type='quantitative' />
+      <column caption='Category' datatype='string' name='[category]' role='dimension' type='nominal' />
+      <column caption='County' datatype='string' name='[county]' role='dimension' semantic-role='[County].[Name]' type='nominal' />
+      <column caption='Inmetro' datatype='integer' name='[inmetro]' role='measure' type='quantitative' />
+      <column caption='Percadultpoverty' datatype='real' name='[percadultpoverty]' role='measure' type='quantitative' />
+      <column caption='Percamerindan' datatype='real' name='[percamerindan]' role='measure' type='quantitative' />
+      <column caption='Percasian' datatype='real' name='[percasian]' role='measure' type='quantitative' />
+      <column caption='Percbelowpoverty' datatype='real' name='[percbelowpoverty]' role='measure' type='quantitative' />
+      <column caption='Percblack' datatype='real' name='[percblack]' role='measure' type='quantitative' />
+      <column caption='Percchildbelowpovert' datatype='real' name='[percchildbelowpovert]' role='measure' type='quantitative' />
+      <column caption='Percelderlypoverty' datatype='real' name='[percelderlypoverty]' role='measure' type='quantitative' />
+      <column caption='Perchsd' datatype='real' name='[perchsd]' role='measure' type='quantitative' />
+      <column caption='Percollege' datatype='real' name='[percollege]' role='measure' type='quantitative' />
+      <column caption='Percother' datatype='real' name='[percother]' role='measure' type='quantitative' />
+      <column caption='Percpovertyknown' datatype='real' name='[percpovertyknown]' role='measure' type='quantitative' />
+      <column caption='Percprof' datatype='real' name='[percprof]' role='measure' type='quantitative' />
+      <column caption='Percwhite' datatype='real' name='[percwhite]' role='measure' type='quantitative' />
+      <column caption='Popadults' datatype='integer' name='[popadults]' role='measure' type='quantitative' />
+      <column caption='Popamerindian' datatype='integer' name='[popamerindian]' role='measure' type='quantitative' />
+      <column caption='Popasian' datatype='integer' name='[popasian]' role='measure' type='quantitative' />
+      <column caption='Popblack' datatype='integer' name='[popblack]' role='measure' type='quantitative' />
+      <column caption='Popdensity' datatype='real' name='[popdensity]' role='measure' type='quantitative' />
+      <column caption='Popother' datatype='integer' name='[popother]' role='measure' type='quantitative' />
+      <column caption='Poppovertyknown' datatype='integer' name='[poppovertyknown]' role='measure' type='quantitative' />
+      <column caption='Poptotal' datatype='integer' name='[poptotal]' role='measure' type='quantitative' />
+      <column caption='Popwhite' datatype='integer' name='[popwhite]' role='measure' type='quantitative' />
+      <column caption='State' datatype='string' name='[state]' role='dimension' semantic-role='[State].[Name]' type='nominal' />
+      <column-instance column='[state]' derivation='None' name='[none:state:nk]' pivot='key' type='nominal' />
+      <drill-paths>
+        <drill-path name='state, county'>
+          <field>[state]</field>
+          <field>[county]</field>
+        </drill-path>
+      </drill-paths>
+      <layout _.fcp.SchemaViewerObjectModel.false...dim-percentage='0.5' _.fcp.SchemaViewerObjectModel.false...measure-percentage='0.4' dim-ordering='alphabetic' measure-ordering='alphabetic' rowDisplayCount='100' show-structure='true' />
+      <style>
+        <style-rule element='mark'>
+          <encoding attr='color' field='[none:state:nk]' type='palette'>
+            <map to='#4e79a7'>
+              <bucket>&quot;IL&quot;</bucket>
+            </map>
+            <map to='#59a14f'>
+              <bucket>&quot;WI&quot;</bucket>
+            </map>
+            <map to='#76b7b2'>
+              <bucket>&quot;IN&quot;</bucket>
+            </map>
+            <map to='#e15759'>
+              <bucket>&quot;MI&quot;</bucket>
+            </map>
+            <map to='#f28e2b'>
+              <bucket>&quot;OH&quot;</bucket>
+            </map>
+          </encoding>
+        </style-rule>
+      </style>
+      <semantic-values>
+        <semantic-value key='[Country].[Name]' value='&quot;United States&quot;' />
+      </semantic-values>
+      <_.fcp.ObjectModelEncapsulateLegacy.true...object-graph>
+        <objects>
+          <object caption='midwest.csv' id='midwest.csv_C5BCAAC2A27844AF9A40969B3FDE73DB'>
+            <properties context=''>
+              <relation connection='textscan.1lz8uuv0bp3j7q0zu5s4b1jqdeeg' name='midwest.csv' table='[midwest#csv]' type='table'>
+                <columns character-set='UTF-8' header='yes' locale='en_US' separator=','>
+                  <column datatype='integer' name='PID' ordinal='0' />
+                  <column datatype='string' name='county' ordinal='1' />
+                  <column datatype='string' name='state' ordinal='2' />
+                  <column datatype='real' name='area' ordinal='3' />
+                  <column datatype='integer' name='poptotal' ordinal='4' />
+                  <column datatype='real' name='popdensity' ordinal='5' />
+                  <column datatype='integer' name='popwhite' ordinal='6' />
+                  <column datatype='integer' name='popblack' ordinal='7' />
+                  <column datatype='integer' name='popamerindian' ordinal='8' />
+                  <column datatype='integer' name='popasian' ordinal='9' />
+                  <column datatype='integer' name='popother' ordinal='10' />
+                  <column datatype='real' name='percwhite' ordinal='11' />
+                  <column datatype='real' name='percblack' ordinal='12' />
+                  <column datatype='real' name='percamerindan' ordinal='13' />
+                  <column datatype='real' name='percasian' ordinal='14' />
+                  <column datatype='real' name='percother' ordinal='15' />
+                  <column datatype='integer' name='popadults' ordinal='16' />
+                  <column datatype='real' name='perchsd' ordinal='17' />
+                  <column datatype='real' name='percollege' ordinal='18' />
+                  <column datatype='real' name='percprof' ordinal='19' />
+                  <column datatype='integer' name='poppovertyknown' ordinal='20' />
+                  <column datatype='real' name='percpovertyknown' ordinal='21' />
+                  <column datatype='real' name='percbelowpoverty' ordinal='22' />
+                  <column datatype='real' name='percchildbelowpovert' ordinal='23' />
+                  <column datatype='real' name='percadultpoverty' ordinal='24' />
+                  <column datatype='real' name='percelderlypoverty' ordinal='25' />
+                  <column datatype='integer' name='inmetro' ordinal='26' />
+                  <column datatype='string' name='category' ordinal='27' />
+                </columns>
+              </relation>
+            </properties>
+          </object>
+        </objects>
+      </_.fcp.ObjectModelEncapsulateLegacy.true...object-graph>
+    </datasource>
+  </datasources>
+  <worksheets>
+    <worksheet name='Sheet 1'>
+      <layout-options>
+        <title>
+          <formatted-text>
+            <run>Bar Chart</run>
+          </formatted-text>
+        </title>
+      </layout-options>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='midwest' name='federated.0ldxkqm0mcgdbs11ibhjo1soubry' />
+          </datasources>
+          <datasource-dependencies datasource='federated.0ldxkqm0mcgdbs11ibhjo1soubry'>
+            <column-instance column='[state]' derivation='None' name='[none:state:nk]' pivot='key' type='nominal' />
+            <column caption='Poptotal' datatype='integer' name='[poptotal]' role='measure' type='quantitative' />
+            <column caption='State' datatype='string' name='[state]' role='dimension' semantic-role='[State].[Name]' type='nominal' />
+            <column-instance column='[poptotal]' derivation='Sum' name='[sum:poptotal:qk]' pivot='key' type='quantitative' />
+          </datasource-dependencies>
+          <computed-sort column='[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[none:state:nk]' direction='DESC' using='[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[sum:poptotal:qk]' />
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='label'>
+            <format attr='text-format' field='[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[sum:poptotal:qk]' value='N' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Automatic' />
+          </pane>
+        </panes>
+        <rows>[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[none:state:nk]</rows>
+        <cols>[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[sum:poptotal:qk]</cols>
+      </table>
+      <simple-id uuid='{0DC003E0-5C7C-4D6F-87DE-0BC0DDDA73D1}' />
+    </worksheet>
+    <worksheet name='Sheet 2'>
+      <layout-options>
+        <title>
+          <formatted-text>
+            <run>Stacked Bar</run>
+          </formatted-text>
+        </title>
+      </layout-options>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='midwest' name='federated.0ldxkqm0mcgdbs11ibhjo1soubry' />
+          </datasources>
+          <datasource-dependencies datasource='federated.0ldxkqm0mcgdbs11ibhjo1soubry'>
+            <column-instance column='[percasian]' derivation='Avg' name='[avg:percasian:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[percwhite]' derivation='Avg' name='[avg:percwhite:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[state]' derivation='None' name='[none:state:nk]' pivot='key' type='nominal' />
+            <column caption='Percasian' datatype='real' name='[percasian]' role='measure' type='quantitative' />
+            <column caption='Percwhite' datatype='real' name='[percwhite]' role='measure' type='quantitative' />
+            <column caption='State' datatype='string' name='[state]' role='dimension' semantic-role='[State].[Name]' type='nominal' />
+          </datasource-dependencies>
+          <filter class='categorical' column='[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[:Measure Names]'>
+            <groupfilter function='union' user:op='manual'>
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[avg:percasian:qk]&quot;' />
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[avg:percwhite:qk]&quot;' />
+            </groupfilter>
+          </filter>
+          <slices>
+            <column>[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[:Measure Names]</column>
+          </slices>
+          <aggregation value='true' />
+        </view>
+        <style />
+        <panes>
+          <pane id='1' selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Automatic' />
+            <encodings>
+              <color column='[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[:Measure Names]' />
+            </encodings>
+          </pane>
+        </panes>
+        <rows>[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[Multiple Values]</rows>
+        <cols>[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[none:state:nk]</cols>
+      </table>
+      <simple-id uuid='{4BCFD1F4-B178-4386-A1D7-441E6318BE43}' />
+    </worksheet>
+    <worksheet name='Sheet 3'>
+      <layout-options>
+        <title>
+          <formatted-text>
+            <run>Heatmap</run>
+          </formatted-text>
+        </title>
+      </layout-options>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='midwest' name='federated.0ldxkqm0mcgdbs11ibhjo1soubry' />
+          </datasources>
+          <datasource-dependencies datasource='federated.0ldxkqm0mcgdbs11ibhjo1soubry'>
+            <column-instance column='[popdensity]' derivation='Avg' name='[avg:popdensity:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[state]' derivation='None' name='[none:state:nk]' pivot='key' type='nominal' />
+            <column caption='Popdensity' datatype='real' name='[popdensity]' role='measure' type='quantitative' />
+            <column caption='State' datatype='string' name='[state]' role='dimension' semantic-role='[State].[Name]' type='nominal' />
+          </datasource-dependencies>
+          <aggregation value='true' />
+        </view>
+        <style />
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Square' />
+            <encodings>
+              <color column='[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[avg:popdensity:qk]' />
+            </encodings>
+          </pane>
+        </panes>
+        <rows>[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[none:state:nk]</rows>
+        <cols />
+      </table>
+      <simple-id uuid='{07ECD266-B882-4D63-B1A1-E8DD64B7EED3}' />
+    </worksheet>
+  </worksheets>
+  <dashboards>
+    <dashboard _.fcp.AccessibleZoneTabOrder.true...enable-sort-zone-taborder='true' name='Dashboard 1'>
+      <style />
+      <size maxheight='800' maxwidth='1000' minheight='800' minwidth='1000' />
+      <zones>
+        <zone h='100000' id='4' type-v2='layout-basic' w='100000' x='0' y='0'>
+          <zone h='98000' id='8' param='horz' type-v2='layout-flow' w='98400' x='800' y='1000'>
+            <zone h='98000' id='6' type-v2='layout-basic' w='82300' x='800' y='1000'>
+              <zone h='34688' id='3' name='Sheet 1' w='82300' x='800' y='64312'>
+                <zone-style>
+                  <format attr='border-color' value='#000000' />
+                  <format attr='border-style' value='none' />
+                  <format attr='border-width' value='0' />
+                  <format attr='margin' value='4' />
+                </zone-style>
+              </zone>
+              <zone h='63312' id='5' name='Sheet 2' w='41150' x='800' y='1000'>
+                <zone-style>
+                  <format attr='border-color' value='#000000' />
+                  <format attr='border-style' value='none' />
+                  <format attr='border-width' value='0' />
+                  <format attr='margin' value='4' />
+                </zone-style>
+              </zone>
+              <zone h='63312' id='10' name='Sheet 3' w='41150' x='41950' y='1000'>
+                <zone-style>
+                  <format attr='border-color' value='#000000' />
+                  <format attr='border-style' value='none' />
+                  <format attr='border-width' value='0' />
+                  <format attr='margin' value='4' />
+                </zone-style>
+              </zone>
+            </zone>
+            <zone fixed-size='161' h='98000' id='7' is-fixed='true' param='vert' type-v2='layout-flow' w='16100' x='83100' y='1000'>
+              <zone h='8250' id='9' name='Sheet 2' pane-specification-id='1' param='[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[:Measure Names]' type-v2='color' w='16100' x='83100' y='1000'>
+                <zone-style>
+                  <format attr='border-color' value='#000000' />
+                  <format attr='border-style' value='none' />
+                  <format attr='border-width' value='0' />
+                  <format attr='margin' value='4' />
+                </zone-style>
+              </zone>
+              <zone h='8125' id='11' name='Sheet 3' pane-specification-id='0' param='[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[avg:popdensity:qk]' type-v2='color' w='16100' x='83100' y='9250'>
+                <zone-style>
+                  <format attr='border-color' value='#000000' />
+                  <format attr='border-style' value='none' />
+                  <format attr='border-width' value='0' />
+                  <format attr='margin' value='4' />
+                </zone-style>
+              </zone>
+            </zone>
+          </zone>
+          <zone-style>
+            <format attr='border-color' value='#000000' />
+            <format attr='border-style' value='none' />
+            <format attr='border-width' value='0' />
+            <format attr='margin' value='8' />
+          </zone-style>
+        </zone>
+      </zones>
+      <devicelayouts>
+        <devicelayout auto-generated='true' name='Phone'>
+          <size maxheight='1000' minheight='1000' sizing-mode='vscroll' />
+          <zones>
+            <zone h='100000' id='13' type-v2='layout-basic' w='100000' x='0' y='0'>
+              <zone h='98000' id='12' param='vert' type-v2='layout-flow' w='98400' x='800' y='1000'>
+                <zone fixed-size='280' h='63312' id='5' is-fixed='true' name='Sheet 2' w='41150' x='800' y='1000'>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone h='8250' id='9' name='Sheet 2' pane-specification-id='1' param='[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[:Measure Names]' type-v2='color' w='16100' x='83100' y='1000'>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='280' h='63312' id='10' is-fixed='true' name='Sheet 3' w='41150' x='41950' y='1000'>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone h='8125' id='11' name='Sheet 3' pane-specification-id='0' param='[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[avg:popdensity:qk]' type-v2='color' w='16100' x='83100' y='9250'>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='270' h='34688' id='3' is-fixed='true' name='Sheet 1' w='82300' x='800' y='64312'>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+              </zone>
+              <zone-style>
+                <format attr='border-color' value='#000000' />
+                <format attr='border-style' value='none' />
+                <format attr='border-width' value='0' />
+                <format attr='margin' value='8' />
+              </zone-style>
+            </zone>
+          </zones>
+        </devicelayout>
+      </devicelayouts>
+      <simple-id uuid='{649D6F14-AADB-4BEA-860F-B300560DAEEA}' />
+    </dashboard>
+  </dashboards>
+  <windows source-height='30'>
+    <window class='worksheet' name='Sheet 1'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='31'>
+            <card type='title' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+        <highlight>
+          <color-one-way>
+            <field>[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[none:state:nk]</field>
+          </color-one-way>
+        </highlight>
+      </viewpoint>
+      <simple-id uuid='{85BCFA1E-74A6-4578-A826-19EE118D99F5}' />
+    </window>
+    <window class='worksheet' name='Sheet 2'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+            <card type='measures' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='31'>
+            <card type='title' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card pane-specification-id='1' param='[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[:Measure Names]' type='color' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+        <highlight>
+          <color-one-way>
+            <field>[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[:Measure Names]</field>
+            <field>[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[none:county:nk]</field>
+          </color-one-way>
+        </highlight>
+      </viewpoint>
+      <simple-id uuid='{17C4E947-344D-4B43-A65E-4BF5C5D0DC6F}' />
+    </window>
+    <window class='worksheet' name='Sheet 3'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='31'>
+            <card type='title' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card pane-specification-id='0' param='[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[avg:popdensity:qk]' type='color' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+        <highlight>
+          <color-one-way>
+            <field>[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[none:state:nk]</field>
+          </color-one-way>
+        </highlight>
+      </viewpoint>
+      <simple-id uuid='{19DD50F8-4EE5-44B5-8920-5BE59DF857CF}' />
+    </window>
+    <window class='dashboard' maximized='true' name='Dashboard 1'>
+      <viewpoints>
+        <viewpoint name='Sheet 1' />
+        <viewpoint name='Sheet 2'>
+          <zoom type='entire-view' />
+          <highlight>
+            <color-one-way>
+              <field>[federated.0ldxkqm0mcgdbs11ibhjo1soubry].[:Measure Names]</field>
+            </color-one-way>
+          </highlight>
+        </viewpoint>
+        <viewpoint name='Sheet 3' />
+      </viewpoints>
+      <active id='-1' />
+      <simple-id uuid='{8B2CD590-CBDE-4191-9BEA-916077E05021}' />
+    </window>
+  </windows>
+  <thumbnails>
+    <thumbnail height='192' name='Dashboard 1' width='192'>
+      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
+      SUVORK5CYII=
+    </thumbnail>
+    <thumbnail height='179' name='Sheet 1' width='192'>
+      iVBORw0KGgoAAAANSUhEUgAAAMAAAACzCAYAAADfahNoAAAACXBIWXMAAA7DAAAOwwHHb6hk
+      AAAHRklEQVR4nO3dX2xT5xnH8V8563DoNIIbkGFaivOHhoRteK3SUsHKVKkbSBuou2l306q7
+      MLBKbaVJ0ypN06pu0qTdVGJApOWiU6eym7ZU3SIuWOkagchIZlSNzjjgLqiVVVj+bMMxCSfZ
+      BUmwE0JG8Dmv4+f7ufOJIz0XfP2+xH597pqcnJwUYNQy1wMALhEATCMAmEYAMI0AYBoBwDQC
+      gGkEANMIAKYRAEwjAJhGADCNAGAaAcA0AoBpBADTCACmEQBMIwCYRgAwjQBgGgHANAKAaQQA
+      0wgAphEATCMAmEYAAcvn865HwC0QAEwjAJj2OdcDWLDrpcOuR8A8WAFgGgHANAL4f6U61Zkq
+      ftip1PzPxhJBADCNAGAaAcA0AoBpBADTCACmEQBM46MQi9ajg8meGw/b96rjB5vdjYNFuWty
+      cnLS9RDVLJ/P66lX3nE9BubBFgimEQBMYwsUsHw+rxUrVrgeA/NgBYBpBADTCACmEQBM442w
+      EHAmuHKxAsA0AoBpBFBs/KK6f/uKXtiXVHLfC/rpb47p4njRz2edC5Yk5br08pyLWCr4P8CM
+      KzrZsV+nG5/Rz57eqFXLCvr4+CHtf9XTj3+0XVHX4yEQrADTcn/Re8ue0J4dG7XqbkleROsf
+      26OnVp3QBwOuh0NQCGBKIXtedQ89qEjJ1Yi+srlOmQsjjqZC0NgCTRkeHpS31ptz3fM85UdH
+      Ja2UJPUcTKpn9pPa9wY+H4JBAFNqa6PyfV9SaQS+72tFTc3M4/a9HSo595Lr0st/DGdGlB9b
+      oCmReKMunzqtQsnVgj5MXVZzw0pHUyFoBDAt9g19c+JNHer6SEPjkvyCPj52SG8MPaJt9a6H
+      Q1DYAs24R1uSz8l/7TX9/PmLGlWN1rR9R889z59AqxkHYgLGmeDKxhYIphEATGMLFDDOBFc2
+      VgCYRgAwjQBgGgHANN4ICwFngisXKwBMIwCYRgA3kepMKvni6zrrz/pB4ZQO7EsqWXrD4Lnn
+      hLFkEMBNtWv34zn1pUsLKJzp1djWR/UlR1Oh/AhgHmsTbcr1pXUjgYLO9I5p89dXOZwK5UYA
+      84kl1Jbr08wiUDij3rHNStQ6nQplRgDzimnHs2t17I2z8uUr9fteJfZsF2fDqgsB3Eo0odah
+      PqXHP1Tv1YQSkYV/BUsLAdxSVInWIf31Dz26mkiIf//VhwAWEE20Knfimh7g5b8qcR4gYByJ
+      rGysADCNAGAaW6CAcSSysrECwDQCgGkEANMIAKZxJDIEHImsXKwAMI0AYBoB3EquS51duZmH
+      qc6kkr86psFZz+E2qUsXAdyWB/St5lN6K1VY+KlYEgjgtnhq2PmYrr51VNw5tToQwO2KPKQn
+      Hv673jl5xfUkKAMCWITY47tV+95RZWd/bQqWHAJYDK9VOx8Z0JEPBhd+LioaASxSdNu3tebP
+      f9LZCdeT4E4QwGJ5Ldq1Y1hvd33qehLcAQK4A/ds+a7asj36xPUgWDQOxASMM8GVjRUAphEA
+      TGMLFDDOBFc2VgCYRgAwjQBgGgHANM4Eh4AzwZWLFQCmEQBMI4BiuS79sjOl4o/5Z9/8iZK/
+      Pq6Romsjxw/o9el7qHKb1CWNAIrFWtTyrwtFxx0vKZNr07bIOfXPVOGr/9yEGhs8JyOivAig
+      RL0a7h3QP6df7gv96l++STs3XVM6M/2cjNL5DWrihjFVgQBKeIo3XtO56Zf7TFpqbVH0vpgG
+      s1Nfj5LLarC+WavdDYkyIoBZVm5o0dDUy30281/F4xEp3qpo9h8akVTIZlXTUO92SJQNAcy2
+      rklf/jSrnC4pk1unlpgkrVdc55X1pUx6TI1x9v/VggDmWK945LyyQ/3qX96g66/1ETU1/Udn
+      M1llRpq0gbtlVw0CmCOi1k3XlH73+v5/+rV+dXO9BvtOKre6SeuczodyIoCbWHlfvdLdA9f3
+      /9PizfpC9/uaiK93NRYCwIGYgHEmuLKxAsA0AoBpbIECxpngysYKANM4EBOCfD7vegTMgwBC
+      wBaocrEFgmkEANMIAKYRAEzjfQCYxgoA0wgAphEATCMAmEYAMI2PQoTmivqPHNT+oxmNenX6
+      6vd+qD3b14nj9W6xAoSkkDqs333ysF56tUMHfvG01p7o0LsDC/8egkUAoSjob92X9eiTW7Xm
+      bsn74gbt2t2sM6ezrgczjwBCMaxhNasheuOKd/9GxS4PlnwRL8JHAKEY09VlNaopvuR58nKf
+      6ZKrkSCJAELyeS2fGNVo8SXflx9bw3eMOkYAoahVrTK6MHjjip/+SLm6KH8FcowAQhFRYmud
+      3j/crc/GJf/f53Tk7Yy+9mDc9WDm8WnQ0JS+D9D+/Rf1zJY6VgDHCACmsQWCaQQA0wgAphEA
+      TCMAmEYAMI0AYBoBwDQCgGkEANMIAKYRAEwjAJhGADCNAGAaAcA0AoBpBADTCACmEQBMIwCY
+      RgAwjQBgGgHANAKAaQQA0wgAphEATCMAmEYAMO1/VT3hVViARisAAAAASUVORK5CYII=
+    </thumbnail>
+    <thumbnail height='192' name='Sheet 2' width='192'>
+      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
+      AElFTkSuQmCC
+    </thumbnail>
+    <thumbnail height='124' name='Sheet 3' width='144'>
+      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
+    </thumbnail>
+  </thumbnails>
+</workbook>
