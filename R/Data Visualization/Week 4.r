@@ -4,75 +4,43 @@ if (!requireNamespace("treemapify", quietly = TRUE)) install.packages("treemapif
 if (!requireNamespace("gridExtra", quietly = TRUE)) install.packages("gridExtra")
 if (!requireNamespace("lubridate", quietly = TRUE)) install.packages("lubridate")
 
-# Load the necessary libraries
+# Load necessary libraries
 library(ggplot2)
 library(dplyr)
-library(gridExtra)
 library(treemapify)
-library(lubridate)
-# Load the economics dataset
+
 # Load the mtcars dataset
-data("mtcars")
+data(mtcars)
 
-# Create a new column for the number of cylinders as a factor
-mtcars$cyl <- as.factor(mtcars$cyl)
+# Pie Chart
+cylinders_count <- mtcars %>% count(cyl)
+pie_chart <- ggplot(cylinders_count, aes(x="", y=n, fill=factor(cyl))) +
+  geom_bar(width=1, stat="identity") +
+  coord_polar("y") +
+  theme_void() +
+  labs(fill="Cylinders", title="Pie Chart of Cylinders")
 
-# Aggregate data for the pie chart
-pie_data <- mtcars %>%
-  group_by(cyl) %>%
-  summarise(count = n(), .groups = 'drop')
+# Grouped Bar Plot
+grouped_barplot <- ggplot(mtcars, aes(x=factor(cyl), y=mpg, fill=factor(gear))) +
+  geom_bar(position="dodge", stat="identity") +
+  labs(x="Cylinders", y="Miles Per Gallon", fill="Gears", title="Grouped Bar Plot of MPG by Cylinders and Gears")
 
-# Calculate percentages
-pie_data <- pie_data %>%
-  mutate(percentage = count / sum(count) * 100)
+# Stacked Bar Plot
+stacked_barplot <- ggplot(mtcars, aes(x=factor(gear), fill=factor(cyl))) +
+  geom_bar(position="stack") +
+  labs(x="Gears", y="Count", fill="Cylinders", title="Stacked Bar Plot of Cylinders by Gears")
 
-# Create labels with percentages
-labels <- paste0(pie_data$cyl, " cyl: ", round(pie_data$percentage, 1), "%")
-
-# Create pie chart
-pie(pie_data$count, labels = labels, main = "Distribution of Cars by Cylinders")
-
-# Prepare data for grouped bar plot
-bar_data <- mtcars %>%
-  group_by(cyl) %>%
-  summarise(mpg = mean(mpg), hp = mean(hp), .groups = 'drop')
-
-# Convert to matrix format
-bar_matrix <- bar_data %>%
-  pivot_longer(cols = c("mpg", "hp"), names_to = "variable", values_to = "value") %>%
-  pivot_wider(names_from = variable, values_from = value) %>%
-  column_to_rownames(var = "cyl") %>%
-  as.matrix()
-
-# Create grouped bar plot
-barplot(t(bar_matrix), beside = TRUE, col = c("blue", "red"), legend = TRUE,
-        args.legend = list(x = "topright", inset = c(-0.2, 0)),
-        main = "Average MPG and HP by Cylinders",
-        xlab = "Cylinders", ylab = "Value")
-
-# Prepare data for treemap
+# Treemap
 treemap_data <- mtcars %>%
-  group_by(cyl) %>%
-  summarise(total_mpg = sum(mpg), .groups = 'drop') %>%
-  mutate(cyl = as.character(cyl))
+  count(cyl, gear) %>%
+  rename(count=n)
+treemap_plot <- ggplot(treemap_data, aes(area=count, fill=factor(cyl), label=paste("Cyl:", cyl, "\nGear:", gear, "\nCount:", count))) +
+  geom_treemap() +
+  geom_treemap_text(colour="white", place="centre", grow=TRUE) +
+  labs(title="Treemap of Cars by Cylinders and Gears", fill="Cylinders")
 
-# Create the treemap
-treemap(treemap_data,
-        index = "cyl",
-        vSize = "total_mpg",
-        title = "Treemap of Total MPG by Cylinders",
-        palette = "Blues")
+write.csv(mtcars, file = "mtcars.csv")
 
-# Convert base R plots to grobs
-pie_grob <- recordPlot()
-grouped_bar_grob <- recordPlot()
-
-# Capture the current treemap plot
-treemap_grob <- recordPlot()
-
-# Create a blank ggplot as a placeholder if needed
-blank_plot <- ggplot() + theme_void()
-
-# Arrange all plots in a grid
-grid.arrange(grobTree(pie_grob), grobTree(grouped_bar_grob), grobTree(treemap_grob), ncol = 2)
-
+# Arrange plots in a grid
+library(gridExtra)
+grid.arrange(pie_chart, grouped_barplot, stacked_barplot, treemap_plot, ncol=2)
