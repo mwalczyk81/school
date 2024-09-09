@@ -1,0 +1,483 @@
+---
+title: "Coronavirus "
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+#------------------ Packages ------------------
+library(coronavirus)
+library(flexdashboard)
+library(dplyr)
+library(tidyr)
+library(leaflet)
+library(leafpop)
+library(purrr)
+library(plotly)
+library(cartogram)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(maps)
+library(viridis)
+library(countrycode)
+library(usmap)
+library(tigris)
+library(readr)
+library(scales)
+
+data(coronavirus)
+
+# Summarize total confirmed cases by state (Province/State) for US
+us_total_by_state <- coronavirus %>%
+  filter(country == "US", type == "confirmed") %>%
+  group_by(province) %>%
+  summarise(total_confirmed = sum(cases, na.rm = TRUE))
+
+# Create the dataframe for the top 5 states with most cases
+top_5_states <- us_total_by_state %>%
+  arrange(desc(total_confirmed)) %>%
+  head(5)
+
+# Creating the map data
+map_data <- coronavirus %>%
+  filter(country == "US") %>%
+  group_by(province, lat, long, type) %>%
+  summarise(cases = sum(cases, na.rm = TRUE)) %>%
+  spread(type, cases) %>%
+  mutate(log_cases = log1p(confirmed))
+
+`%>%` <- magrittr::`%>%`
+#------------------ Parameters ------------------
+# Set colors
+# https://www.w3.org/TR/css-color-3/#svg-color
+confirmed_color <- "purple"
+active_color <- "#1f77b4"
+recovered_color <- "forestgreen"
+death_color <- "red"
+#------------------ Data ------------------
+df <- coronavirus %>%
+  # dplyr::filter(date == max(date)) %>%
+  dplyr::filter(country == "US") %>%
+  dplyr::group_by(country, type) %>%
+  dplyr::summarise(total = sum(cases)) %>%
+  tidyr::pivot_wider(
+    names_from = type,
+    values_from = total
+  ) %>%
+  # dplyr::mutate(unrecovered = confirmed - ifelse(is.na(recovered), 0, recovered) - ifelse(is.na(death), 0, death)) %>%
+  dplyr::mutate(unrecovered = confirmed - ifelse(is.na(death), 0, death)) %>%
+  dplyr::arrange(-confirmed) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(country = dplyr::if_else(country == "United Arab Emirates", "UAE", country)) %>%
+  dplyr::mutate(country = dplyr::if_else(country == "Mainland China", "China", country)) %>%
+  dplyr::mutate(country = dplyr::if_else(country == "North Macedonia", "N.Macedonia", country)) %>%
+  dplyr::mutate(country = trimws(country)) %>%
+  dplyr::mutate(country = factor(country, levels = country))
+
+df_daily <- coronavirus %>%
+  dplyr::filter(country == "US") %>%
+  dplyr::group_by(date, type) %>%
+  dplyr::summarise(total = sum(cases, na.rm = TRUE)) %>%
+  tidyr::pivot_wider(
+    names_from = type,
+    values_from = total
+  ) %>%
+  dplyr::arrange(date) %>%
+  dplyr::ungroup() %>%
+  #dplyr::mutate(active = confirmed - death - recovered) %>%
+  dplyr::mutate(active = confirmed - death) %>%
+  dplyr::mutate(
+    confirmed_cum = cumsum(confirmed),
+    death_cum = cumsum(death),
+    # recovered_cum = cumsum(recovered),
+    active_cum = cumsum(active)
+  )
+
+
+df1 <- coronavirus %>% dplyr::filter(date == max(date))
+```
+
+Summary of US cases
+=======================================================================
+
+Row {data-width=400}
+-----------------------------------------------------------------------
+
+### confirmed {.value-box}
+
+```{r}
+
+valueBox(
+  value = paste(format(sum(df$confirmed), big.mark = ","), "", sep = " "),
+  caption = "Total confirmed cases",
+  icon = "fas fa-user-md",
+  color = confirmed_color
+)
+```
+
+### death {.value-box}
+
+```{r}
+
+valueBox(
+  value = paste(format(sum(df$death, na.rm = TRUE), big.mark = ","), " (",
+    round(100 * sum(df$death, na.rm = TRUE) / sum(df$confirmed), 1),
+    "%)",
+    sep = ""
+  ),
+  caption = "Death cases (death rate)",
+  icon = "fas fa-heart-broken",
+  color = death_color
+)
+```
+
+
+Row
+-----------------------------------------------------------------------
+
+### **Daily cumulative cases by type** (US only)
+    
+```{r}
+plotly::plot_ly(data = df_daily) %>%
+  plotly::add_trace(
+    x = ~date,
+    # y = ~active_cum,
+    y = ~confirmed_cum,
+    type = "scatter",
+    mode = "lines+markers",
+    # name = "Active",
+    name = "Confirmed",
+    line = list(color = active_color),
+    marker = list(color = active_color)
+  ) %>%
+  plotly::add_trace(
+    x = ~date,
+    y = ~death_cum,
+    type = "scatter",
+    mode = "lines+markers",
+    name = "Death",
+    line = list(color = death_color),
+    marker = list(color = death_color)
+  ) %>%
+  # plotly::add_annotations(
+  #   x = as.Date("2020-02-04"),
+  #   y = 1,
+  #   text = paste("First case"),
+  #   xref = "x",
+  #   yref = "y",
+  #   arrowhead = 5,
+  #   arrowhead = 3,
+  #   arrowsize = 1,
+  #   showarrow = TRUE,
+  #   ax = -10,
+  #   ay = -90
+  # ) %>%
+  # plotly::add_annotations(
+  #   x = as.Date("2020-03-11"),
+  #   y = 3,
+  #   text = paste("First death"),
+  #   xref = "x",
+  #   yref = "y",
+  #   arrowhead = 5,
+  #   arrowhead = 3,
+  #   arrowsize = 1,
+  #   showarrow = TRUE,
+  #   ax = -90,
+  #   ay = -90
+  # ) %>%
+  # plotly::add_annotations(
+  #   x = as.Date("2020-03-18"),
+  #   y = 14,
+  #   text = paste(
+  #     "Lockdown"
+  #   ),
+  #   xref = "x",
+  #   yref = "y",
+  #   arrowhead = 5,
+  #   arrowhead = 3,
+  #   arrowsize = 1,
+  #   showarrow = TRUE,
+  #   ax = -10,
+  #   ay = -90
+  # ) %>%
+  plotly::layout(
+    title = "",
+    yaxis = list(title = "Cumulative number of cases"),
+    xaxis = list(title = "Date"),
+    legend = list(x = 0.1, y = 0.9),
+    hovermode = "compare"
+  )
+```
+
+Comparison
+=======================================================================
+
+
+Column {data-width=400}
+-------------------------------------
+
+
+### **Daily new confirmed cases**
+    
+```{r}
+daily_confirmed <- coronavirus %>%
+  dplyr::filter(type == "confirmed") %>%
+  dplyr::filter(date >= "2020-02-29") %>%
+  dplyr::mutate(country = country) %>%
+  dplyr::group_by(date, country) %>%
+  dplyr::summarise(total = sum(cases)) %>%
+  dplyr::ungroup() %>%
+  tidyr::pivot_wider(names_from = country, values_from = total)
+
+#----------------------------------------
+# Plotting the data
+
+daily_confirmed %>%
+  plotly::plot_ly() %>%
+  plotly::add_trace(
+    x = ~date,
+    y = ~US,
+    type = "scatter",
+    mode = "lines+markers",
+    name = "US"
+  ) %>%
+  # plotly::add_trace(
+  #   x = ~date,
+  #   y = ~France,
+  #   type = "scatter",
+  #   mode = "lines+markers",
+  #   name = "France"
+  # ) %>%
+  # plotly::add_trace(
+  #   x = ~date,
+  #   y = ~Spain,
+  #   type = "scatter",
+  #   mode = "lines+markers",
+  #   name = "Spain"
+  # ) %>%
+  plotly::add_trace(
+    x = ~date,
+    y = ~Italy,
+    type = "scatter",
+    mode = "lines+markers",
+    name = "Italy"
+  ) %>%
+  plotly::add_trace(
+    x = ~date,
+    y = ~Germany,
+    type = "scatter",
+    mode = "lines+markers",
+    name = "Germany"
+  ) %>%
+  plotly::add_trace(
+    x = ~date,
+    y = ~Netherlands,
+    type = "scatter",
+    mode = "lines+markers",
+    name = "Netherlands"
+  ) %>%
+  plotly::layout(
+    title = "",
+    legend = list(x = 0.7, y = 0.9),
+    yaxis = list(title = "New confirmed cases"),
+    xaxis = list(title = "Date"),
+    # paper_bgcolor = "black",
+    # plot_bgcolor = "black",
+    # font = list(color = 'white'),
+    hovermode = "compare",
+    margin = list(
+      # l = 60,
+      # r = 40,
+      b = 10,
+      t = 10,
+      pad = 2
+    )
+  )
+```
+ 
+### **Cases distribution by type**
+
+```{r daily_summary}
+df_EU <- coronavirus %>%
+  # dplyr::filter(date == max(date)) %>%
+  dplyr::filter(country == "US" |
+    country == "France" |
+    country == "Italy" |
+    country == "Spain") %>%
+  dplyr::group_by(country, type) %>%
+  dplyr::summarise(total = sum(cases)) %>%
+  tidyr::pivot_wider(
+    names_from = type,
+    values_from = total
+  ) %>%
+  # dplyr::mutate(unrecovered = confirmed - ifelse(is.na(recovered), 0, recovered) - ifelse(is.na(death), 0, death)) %>%
+  dplyr::mutate(unrecovered = confirmed - ifelse(is.na(death), 0, death)) %>%
+  dplyr::arrange(confirmed) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(country = dplyr::if_else(country == "United Arab Emirates", "UAE", country)) %>%
+  dplyr::mutate(country = dplyr::if_else(country == "Mainland China", "China", country)) %>%
+  dplyr::mutate(country = dplyr::if_else(country == "North Macedonia", "N.Macedonia", country)) %>%
+  dplyr::mutate(country = trimws(country)) %>%
+  dplyr::mutate(country = factor(country, levels = country))
+
+plotly::plot_ly(
+  data = df_EU,
+  x = ~country,
+  # y = ~unrecovered,
+  y = ~ confirmed,
+  # text =  ~ confirmed,
+  # textposition = 'auto',
+  type = "bar",
+  name = "Confirmed",
+  marker = list(color = active_color)
+) %>%
+  plotly::add_trace(
+    y = ~death,
+    # text =  ~ death,
+    # textposition = 'auto',
+    name = "Death",
+    marker = list(color = death_color)
+  ) %>%
+  plotly::layout(
+    barmode = "stack",
+    yaxis = list(title = "Total cases"),
+    xaxis = list(title = ""),
+    hovermode = "compare",
+    margin = list(
+      # l = 60,
+      # r = 40,
+      b = 10,
+      t = 10,
+      pad = 2
+    )
+  )
+```
+
+
+US Specific
+=======================================================================
+
+
+row {.tabset}
+-----------------------------------------------------------------------
+### Daily new deaths in the US
+```{r}
+plotly::plot_ly(data = df_daily) %>%
+  plotly::add_trace(
+    x = ~date,
+    y = ~death,
+    type = "scatter",
+    mode = "lines+markers",
+    name = "new deaths",
+    line = list(color = death_color),
+    marker = list(color = death_color)
+  ) %>%
+  plotly::layout(
+    title = "daily new deaths",
+    yaxis = list(title = "number of deaths"),
+    xaxis = list(title = "date"),
+    legend = list(x = 0.1, y = 0.9),
+    hovermode = "compare"
+  )
+```
+### Top 5 states by total number of cases
+```{r}
+# Load the data
+covid_data <- read_csv("C:/Users/mwalc/Downloads/us-counties-recent.csv") 
+
+# Summarize the data to get the latest cases per state
+latest_covid_data <- covid_data %>%
+  group_by(state) %>%
+  summarize(cases = sum(cases, na.rm = TRUE), .groups = 'drop') %>%
+  arrange(desc(cases)) %>%
+  slice(1:5)
+
+# Plot the bar chart
+ggplot(latest_covid_data, aes(x = reorder(state, cases), y = cases, fill = state)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Top 5 COVID-19 Hotspots in the US",
+       x = "State",
+       y = "Total Cases",
+       fill = "State") +
+  scale_y_continuous(labels = scales::comma_format()) +
+  scale_fill_viridis_d(option = "plasma")
+```
+
+Map
+=======================================================================
+
+Row 
+-----------------------------------------------------------------------
+
+### Map of cases worldwide
+
+```{r}
+
+# Preprocess the data
+covid_data <- coronavirus %>%
+  filter(type == "confirmed") %>%
+  group_by(country) %>%
+  summarize(total_cases = sum(cases)) %>%
+  ungroup()
+
+# Standardize country names in the covid_data to match those in world_map
+covid_data$country <- countrycode(covid_data$country, "country.name", "iso3c")
+world_map <- st_as_sf(map("world", plot = FALSE, fill = TRUE))
+world_map$country <- countrycode(world_map$ID, "country.name", "iso3c")
+
+# Merge COVID-19 data with the world map
+world_data <- merge(world_map, covid_data, by = "country", all.x = TRUE)
+
+# Check for NA values and fill them with zeros
+world_data$total_cases[is.na(world_data$total_cases)] <- 0
+
+# Transform coordinates to EPSG:4326 (WGS84)
+world_data <- st_transform(world_data, crs = 4326)
+
+# Create a color palette for the choropleth
+pal <- colorNumeric(
+  palette = "plasma",
+  domain = world_data$total_cases,
+  na.color = "transparent"
+)
+
+# Create the leaflet map
+leaflet(world_data, options = leafletOptions(preferCanvas = TRUE, worldCopyJump = FALSE)) %>%
+  addTiles() %>%
+  setView(lng = 0, lat = 20, zoom = 2) %>%
+  addPolygons(
+    fillColor = ~pal(total_cases),
+    weight = 1,
+    opacity = 1,
+    color = "white",
+    fillOpacity = 0.7,
+    highlight = highlightOptions(
+      weight = 2,
+      color = "#666",
+      fillOpacity = 0.7,
+      bringToFront = TRUE
+    ),
+    label = ~paste(country, "<br>", "Total Cases:", scales::comma(total_cases)),
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "15px",
+      direction = "auto"
+    )
+  ) %>%
+  addLegend(
+    pal = pal,
+    values = ~total_cases,
+    opacity = 0.7,
+    title = "Total Cases",
+    position = "bottomright"
+  ) %>%
+  setMaxBounds(lng1 = -180, lat1 = -60, lng2 = 180, lat2 = 85) %>% 
+  addProviderTiles("CartoDB.Positron")
+
+```
+
