@@ -1,0 +1,17 @@
+@startuml "Week 6 Part 2"
+actor User
+
+participant "DiarySystem" as DS
+participant "AvailabilityChecker" as AC
+participant "Scheduler" as SC
+participant "NotificationService" as NS
+
+User -> DS: Create Meeting Request
+DS -> AC: Check Availability of Participants
+AC -> DS: Return Available Time Slots
+DS -> SC: Schedule Meeting
+SC -> DS: Confirm Meeting
+DS -> NS: Notify Participants of Scheduled Meeting
+NS -> User: Send Notification of Meeting
+
+@enduml

@@ -1,0 +1,71 @@
+@startuml "Week 6"
+' Messaging System
+class MessagingSystem {
+  - recipient: String
+  - messageText: String
+  - timestamp: DateTime
+  - isRead: Boolean
+  - messageType: String
+  + sendMessage(): void
+  + receiveMessage(): void
+  + deleteMessage(): void
+  + markAsRead(): void
+}
+
+' Printer for a Personal Computer
+class Printer {
+  - printerName: String
+  - status: String
+  - inkLevel: Integer
+  - paperAvailable: Integer
+  - model: String
+  + printDocument(document: File): void
+  + cancelPrintJob(): void
+  + checkStatus(): String
+  + refillInk(): void
+  + addPaper(): void
+}
+
+' Personal Music System
+class MusicSystem {
+  - currentTrack: String
+  - playlist: List<String>
+  - volume: Integer
+  - isPlaying: Boolean
+  - isShuffle: Boolean
+  + play(): void
+  + pause(): void
+  + nextTrack(): void
+  + previousTrack(): void
+  + adjustVolume(level: Integer): void
+  + shufflePlaylist(): void
+}
+
+' Bank Account
+class BankAccount {
+  - accountNumber: String
+  - accountHolderName: String
+  - balance: Double
+  - accountType: String
+  - createdDate: Date
+  + deposit(amount: Double): void
+  + withdraw(amount: Double): void
+  + checkBalance(): Double
+  + transferFunds(targetAccount: BankAccount, amount: Double): void
+}
+
+' Library Catalog
+class LibraryCatalog {
+  - bookTitle: String
+  - author: String
+  - ISBN: String
+  - publicationDate: Date
+  - isAvailable: Boolean
+  + searchByTitle(title: String): List<Book>
+  + searchByAuthor(author: String): List<Book>
+  + checkAvailability(isbn: String): Boolean
+  + addBook(book: Book): void
+  + removeBook(isbn: String): void
+}
+
+@enduml
