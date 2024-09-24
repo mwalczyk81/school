@@ -1,0 +1,17 @@
+@startuml "Ticket Machine Conceptual"
+!define RECTANGLE
+
+rectangle "Ticket Machine" {
+  rectangle "User Interface" as UI
+  rectangle "Payment Processor" as PP
+  rectangle "Ticket Issuer" as TI
+}
+
+actor Passenger
+
+Passenger --> UI : Select Destination, Insert Payment
+UI --> PP : Process Payment
+PP --> TI : Generate Ticket
+TI --> UI : Display Ticket Information
+
+@enduml

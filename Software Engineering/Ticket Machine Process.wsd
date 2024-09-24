@@ -1,0 +1,15 @@
+@startuml "Ticket Machine Process"
+actor Passenger
+participant "User Interface" as UI
+participant "Payment Processor" as PP
+participant "Ticket Issuer" as TI
+
+Passenger -> UI : Selects Destination
+UI -> Passenger : Displays Ticket Price
+Passenger -> UI : Inserts Payment Info
+UI -> PP : Sends Payment Details
+PP -> UI : Payment Success/Failure
+UI -> TI : Issue Ticket
+TI -> Passenger : Prints Ticket
+
+@enduml

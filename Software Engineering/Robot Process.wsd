@@ -1,0 +1,15 @@
+@startuml "Robot Process"
+actor User
+participant "Control System" as CS
+participant "Sensors" as S
+participant "Motor System" as MS
+participant "Cleaning Module" as CM
+
+User -> CS: Start cleaning
+CS -> MS: Move forward
+S -> CS: Detect obstacles
+CS -> MS: Turn or reverse
+CS -> CM: Start/stop cleaning
+CS -> MS: Move in new direction
+CM -> CS: Cleaning completed
+@enduml

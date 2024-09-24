@@ -1,0 +1,16 @@
+@startuml "Video Conferencing Process"
+actor Participant
+participant "Audio Processor" as AP
+participant "Video Processor" as VP
+participant "Data Sharing Module" as DSM
+participant "Network Interface" as NI
+participant "Other Participants" as OP
+
+Participant <-> AP: Send/Receive audio
+Participant <-> VP: Send/Receive video
+Participant <-> DSM: Share computer data
+AP <-> NI: Transmit/Receive audio
+VP <-> NI: Transmit/Receive video
+DSM <-> NI: Transmit/Receive data
+NI <-> OP: Connect to other participants
+@enduml

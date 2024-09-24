@@ -1,0 +1,10 @@
+@startuml "Robot Conceptual"
+package "Robot Floor-cleaner" {
+  [User Input] --> [Control System] : Start cleaning
+  [Sensors] --> [Control System] : Detect walls and obstructions
+  [Control System] --> [Motor System] : Move forward/backward/turn
+  [Cleaning Module] --> [Motor System] : Clean floor
+  [Control System] --> [Cleaning Module] : Start/stop cleaning
+  [Battery] --> [Control System] : Monitor battery level
+}
+@enduml

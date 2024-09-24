@@ -1,0 +1,15 @@
+@startuml "Video Conferencing System Conceptual"
+rectangle "Video Conferencing System" {
+  rectangle "Audio Processing" as AP
+  rectangle "Video Processing" as VP
+  rectangle "Data Sharing" as DS
+  rectangle "User Interface" as UI
+}
+
+actor Participant
+
+Participant --> UI : Interact with UI
+UI --> VP : Send Video Feed
+UI --> AP : Send/Receive Audio
+UI --> DS : Share Computer Data
+@enduml
