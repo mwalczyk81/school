@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Weather App</title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    </head>    
+<body>
+    <div class="weather-container">
+        <h1>Weather App</h1>
+        <form method="POST">
+            <input type="text" name="city" placeholder="Enter City">
+            <button type="button" onclick="getLocation()">Use My Location</button>
+            <input type="hidden" id="lat" name="lat">
+            <input type="hidden" id="lon" name="lon">
+            <button type="submit">Get Weather</button>
+        </form>
+        {% if weather %}
+        <div>
+            <h2>{{ weather['name'] }}</h2>
+            <p>Temperature: {{ weather['main']['temp'] if weather['main']['temp'] is not none else 'N/A' }} °F</p>
+            <p>{{ weather['weather'][0]['description'] if weather['weather'] and weather['weather'][0] is not none else 'N/A' }}</p>
+            <p>Humidity: {{ weather['main']['humidity'] if weather['main']['humidity'] is not none else 'N/A' }}%</p>
+            <p>Wind Speed: {{ weather['wind']['speed'] if weather['wind']['speed'] != 0 else 'N/A' }} m/s</p>
+        </div>
+        {% endif %}    
+    
+        {% if forecast %}
+        <h3>5-Day Forecast</h3>
+        <div class="forecast-group">
+            {% for date, summary in forecast.items() %}
+                <!-- Forecast card for each day -->
+                <div class="forecast-card">
+                    <!-- Display high/low temp and icon -->
+                    <div class="forecast-summary" onclick="toggleDetails('{{ date }}')">
+                        <img src="https://openweathermap.org/img/wn/{{ summary['icon'] }}.png" alt="Weather Icon">
+                        <h4>{{ date | datetimeformat }}</h4>  <!-- Friendly date format -->
+                        <p>High: {{ summary['high'] }}°C, Low: {{ summary['low'] }}°F</p>
+                    </div>
+    
+                    <!-- Detailed forecast, initially hidden -->
+                    <div id="details-{{ date }}" class="forecast-details" style="display: none;">
+                        <h5>Details for {{ date | datetimeformat }}:</h5>
+                        <div class="forecast">
+                            {% for item in summary['details'] %}
+                                <div class="forecast-item">
+                                    <!-- Time -->
+                                    <p>{{ item.dt_txt.split(' ')[1] }}</p>
+    
+                                    <!-- Weather Icon for each interval -->
+                                    <img src="https://openweathermap.org/img/wn/{{ item.weather[0].icon }}.png" alt="Weather Icon">
+    
+                                    <!-- Temperature -->
+                                    <p>Temp: {{ item.main.temp }}°F</p>
+    
+                                    <!-- Description -->
+                                    <p>{{ item.weather[0].description }}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No forecast data available yet. Please enter a city or use geolocation.</p>
+    {% endif %}
+           
+    
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}       
+    </div>
+
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+    
+        function showPosition(position) {
+            document.getElementById('lat').value = position.coords.latitude;
+            document.getElementById('lon').value = position.coords.longitude;
+            document.forms[0].submit();  // Automatically submit the form
+        }
+    </script>
+    <script>
+        function toggleDetails(date) {
+            var details = document.getElementById("details-" + date);
+            if (details.style.display === "none") {
+                details.style.display = "block";
+            } else {
+                details.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
