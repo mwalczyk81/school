@@ -1,0 +1,115 @@
+﻿@page "/"
+@using global::Weather.Models
+@using global::Weather.Services
+@inject WeatherService WeatherService
+@inject IJSRuntime JSRuntime
+
+@rendermode InteractiveServer
+
+<h3 class="header">Weather Forecast</h3>
+
+<div class="weather-container">
+    <div class="input-container">
+        <input type="text" @bind="City" placeholder="Enter city" class="city-input" />
+        <button @onclick="GetWeather" class="get-weather-button">Get Weather</button>
+        <button @onclick="GetWeatherByLocation" class="get-weather-button">Use My Location</button>
+    </div>
+
+    @if (currentWeather != null && dailySummary != null)
+    {
+        <div class="current-weather card">
+            <h4>@currentWeather.Name</h4>
+            <div class="weather-main">
+                <p>Current Temp: @currentWeather.Main?.Temp°F</p>
+                <img src="@GetIconUrl(currentWeather.Weather?[0].Icon ?? "")" alt="Weather Icon" class="weather-icon-centered" />
+                <p>@currentWeather.Weather?[0].Description</p>
+            </div>
+        </div>
+
+        <h5 class="forecast-header">5-Day Forecast:</h5>
+        <div class="forecast-row">
+            <!-- Horizontal layout for forecast cards -->
+            @foreach (var day in dailySummary)
+            {
+                <div class="forecast-card card" @onclick="() => ToggleDay(day.Key)">
+                    <h6>@day.Key</h6>
+                    <img src="@GetIconUrl(day.Value.Icon ?? "")" alt="Weather Icon" class="forecast-icon-centered" />
+                    <p>High: @day.Value.High°F</p>
+                    <p>Low: @day.Value.Low°F</p>
+                </div>
+            }
+        </div>
+
+        <!-- Horizontal layout for expanded details -->
+        @if (!string.IsNullOrEmpty(expandedDay))
+        {
+            <div class="hourly-forecast-row">
+                <h6>Hourly Forecast for @expandedDay:</h6>
+                <div class="hourly-grid">
+                    @if (dailySummary.ContainsKey(expandedDay) && dailySummary[expandedDay]?.Details is not null)
+                    {
+                        @foreach (var hourly in dailySummary[expandedDay].Details!)
+                        {
+                            <div class="hourly-item">
+                                <p>@DateTime.Parse(hourly.Dt_Txt ?? "").ToString("HH:mm")</p>
+                                <img src="@GetIconUrl(hourly.Weather?[0]?.Icon ?? "")" alt="Hourly Weather Icon" />
+                                <p>@hourly.Main?.Temp°F</p>
+                                <p>@hourly.Weather?[0].Description</p>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        }
+    }
+    else if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <p class="error-message">@errorMessage</p>
+    }
+</div>
+
+
+@code {
+    private string City = "New York";
+    private WeatherData? currentWeather;
+    private Dictionary<string, DailyForecast>? dailySummary;
+    private string? errorMessage;
+    private string expandedDay = ""; // Track the currently expanded day
+
+    private async Task GetWeather()
+    {
+        (currentWeather, dailySummary, errorMessage) = await WeatherService.GetWeatherAsync(City);
+        expandedDay = ""; // Reset expanded day when new data is fetched
+    }
+
+    private async Task GetWeatherByLocation()
+    {
+        try
+        {
+            // Call JavaScript to get the user's location (lat/lon)
+            var location = await JSRuntime.InvokeAsync<Location>("getUserLocation", Array.Empty<object>());
+
+            // Fetch weather data using the user's latitude and longitude
+            (currentWeather, dailySummary, errorMessage) = await WeatherService.GetWeatherAsync(lat: location.Lat, lon: location.Lon);
+            expandedDay = ""; // Reset expanded day when new data is fetched
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to retrieve location: {ex.Message}";
+        }
+    }
+
+    private void ToggleDay(string day)
+    {
+        if (expandedDay == day)
+        {
+            expandedDay = ""; // Collapse if already expanded
+        }
+        else
+        {
+            expandedDay = day; // Expand the clicked day
+        }
+    }
+
+    private string GetIconUrl(string icon) => $"https://openweathermap.org/img/wn/{icon}.png";
+}

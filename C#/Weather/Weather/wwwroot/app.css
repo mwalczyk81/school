@@ -1,0 +1,116 @@
+/* General Styling */
+.weather-container {
+    font-family: 'Roboto', sans-serif;
+    margin: 20px;
+    padding: 20px;
+    background-color: #f4f6f9;
+    border-radius: 12px;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow for depth */
+}
+
+.input-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.city-input {
+    width: 70%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.get-weather-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    font-size: 1rem;
+}
+
+    .get-weather-button:hover {
+        background-color: #0056b3;
+        box-shadow: 0 4px 10px rgba(0, 91, 204, 0.3);
+    }
+
+/* Card Styling */
+.card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    text-align: center;
+    flex: 1;
+}
+
+/* Weather Icon Centering */
+.weather-icon-centered, .forecast-icon-centered {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto; /* Center horizontally */
+    display: block;
+}
+
+/* Forecast Row */
+.forecast-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    overflow-x: auto; /* Allows horizontal scrolling if needed */
+    padding-bottom: 20px;
+}
+
+.forecast-card {
+    flex: 0 0 auto; /* Ensures the cards do not shrink */
+    min-width: 180px; /* Minimum width for the cards */
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+    .forecast-card:hover {
+        transform: translateY(-5px);
+    }
+
+/* Expanded Hourly Forecast */
+.hourly-forecast-row {
+    margin-top: 20px;
+    background-color: #eef2f7;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.hourly-grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+}
+
+.hourly-item {
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    min-width: 140px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+    .hourly-item img {
+        width: 40px;
+        height: 40px;
+    }
+
+/* Error message */
+.error-message {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
