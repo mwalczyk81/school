@@ -4,15 +4,10 @@
     using System.Text.Json;
     using Weather.Models;
 
-    public class WeatherService
+    public class WeatherService(HttpClient httpClient)
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient = httpClient;
         private const string ApiKey = "906b6939735602a519447e37a839d229";
-
-        public WeatherService(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
 
         public async Task<(WeatherData?, Dictionary<string, DailyForecast>?, string?)> GetWeatherAsync(string? city = null, double? lat = null, double? lon = null)
         {
@@ -64,13 +59,13 @@
                         string localDateStr = localTime.ToString("yyyy-MM-dd");
 
                         // Group by the local date
-                        if (!forecastGrouped.ContainsKey(localDateStr))
+                        if (!forecastGrouped.TryGetValue(localDateStr, out List<ForecastItem>? value))
                         {
-                            forecastGrouped[localDateStr] = new List<ForecastItem>();
+                            value = ([]);
+                            forecastGrouped[localDateStr] = value;
                         }
 
-                        // Add the adjusted entry to the group
-                        forecastGrouped[localDateStr].Add(entry);
+                        value.Add(entry);
                     }
 
                     // Calculate high/low temperatures for each day and build the daily summary
