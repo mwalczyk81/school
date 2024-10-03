@@ -37,8 +37,7 @@
                 var options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
                 var currentWeather = await JsonSerializer.DeserializeAsync<WeatherData>(await currentResponse.Content.ReadAsStreamAsync(), options);
                 var forecastWeather = await JsonSerializer.DeserializeAsync<ForecastData>(await forecastResponse.Content.ReadAsStreamAsync(), options);
-
-                var timezoneOffset = forecastWeather?.City?.Timezone ?? 0; // Get timezone offset in seconds
+                var timezoneOffset = forecastWeather?.City?.Timezone ?? 0;
                 var forecastGrouped = new Dictionary<string, List<ForecastItem>>();
                 var dailySummary = new Dictionary<string, DailyForecast>();
 
@@ -46,7 +45,6 @@
                 {
                     foreach (var entry in forecastWeather.List)
                     {
-                        // Parse the original UTC datetime
                         DateTime utcTime = DateTime.ParseExact(entry.Dt_Txt ?? "", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
 
                         // Adjust the time using the timezone offset (in seconds)
@@ -86,7 +84,7 @@
                     }
                 }
 
-                return (currentWeather, dailySummary, null); // Return daily summary and current weather
+                return (currentWeather, dailySummary, null);
             }
             else
             {
