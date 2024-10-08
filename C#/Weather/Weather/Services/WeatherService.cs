@@ -9,6 +9,36 @@
         private readonly HttpClient _httpClient = httpClient;
         private const string ApiKey = "906b6939735602a519447e37a839d229";
 
+        public JsonSerializerOptions GetOptions()
+        {
+            return new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+        }
+
+        public async Task<IEnumerable<CitySuggestion>> GetCitySuggestionsAsync(string input, JsonSerializerOptions options, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(input) || input.Length < 2)
+            {
+                return [];
+            }
+
+            var username = "mwalczyk";  // Use your GeoNames username
+            var url = $"http://api.geonames.org/searchJSON?q={input}&maxRows=5&username={username}&featureClass=P&style=full";
+
+            using var client = new HttpClient();
+            var response = await client.GetAsync(url, cancellationToken);
+            var result = await JsonSerializer.DeserializeAsync<GeoNamesResult>(await response.Content.ReadAsStreamAsync(cancellationToken), options, cancellationToken);
+
+            if (result?.Geonames == null || !result.Geonames.Any())
+                return [];
+
+            return result.Geonames.Select(g => new CitySuggestion
+            {
+                DisplayName = $"{g.Name}, {g.AdminName1}, {g.CountryName}", // City, State, Country
+                Lat = g.Lat,
+                Lng = g.Lng
+            });
+        }
+
         public async Task<(WeatherData?, Dictionary<string, DailyForecast>?, string?)> GetWeatherAsync(string? city = null, double? lat = null, double? lon = null)
         {
             string currentUrl;

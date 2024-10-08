@@ -1,31 +1,57 @@
 ﻿@page "/"
 
-@using global::Weather.Models
-@using global::Weather.Services
+@using Weather.Models
+@using Weather.Services
 
 @inject WeatherService WeatherService
 @inject IJSRuntime JSRuntime
 @inject ISnackbar Snackbar
 
-@rendermode InteractiveServer
-
+<title>Weather Forecast</title>
 <MudText Typo="Typo.h4" GutterBottom="true" Align="Align.Center">Weather Forecast</MudText>
-<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6" >
-    <MudPaper  Class="pa-4" Elevation="3">
-        <MudGrid AlignItems="Center" Justify="Justify.SpaceBetween" Class="mb-4">
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6">
+    <MudPaper Class="pa-4" Elevation="3">
+        <MudGrid Justify="Justify.SpaceBetween" Class="mb-4">
             <MudItem xs="12" sm="8">
-                <MudTextField @bind-Value="City" Placeholder="Enter city" Label="City"
-                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.LocationCity" Size="Size.Large" Immediate="true" TextChanged="OnCityChanged" />
+                <MudAutocomplete @bind-Value="SelectedCity"
+                                 Label="City"
+                                 Variant="Variant.Text"
+                                 Placeholder="Enter city"
+                                 Adornment="Adornment.Start"
+                                 AdornmentIcon="@Icons.Material.Filled.LocationCity"
+                                 AdornmentColor="Color.Primary"
+                                 IconSize="Size.Medium"
+                                 Immediate="true"
+                                 ToStringFunc="(city) => city?.DisplayName"
+                                 MinCharacters="2"
+                                 OnClearButtonClick="ClearSelectedCity"
+                                 SearchFunc="@SearchCitySuggestions"
+                                 Clearable="true" 
+                                 TextChanged="OnInputTextChanged" />
             </MudItem>
             <MudItem xs="12" sm="4" Class="d-flex justify-end">
-                <MudButton OnClick="GetWeather" Disabled="@isGetWeatherDisabled" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" Class="mx-2">Get Weather</MudButton>
-                <MudIconButton OnClick="GetWeatherByLocation" Color="Color.Primary" Variant="Variant.Filled" Icon="@Icons.Material.Filled.MyLocation" Size="Size.Large"/>
+                <MudButton OnClick="GetWeatherAsync"
+                           Disabled="@(SelectedCity == null || isLoading)"
+                           Color="Color.Primary"
+                           Variant="Variant.Filled"
+                           Size="Size.Small"
+                           Class="mx-2"
+                           AriaLabel="Get Weather">
+                    Get Weather
+                </MudButton>
+                <MudIconButton OnClick="GetWeatherByLocationAsync"
+                               Color="Color.Primary"
+                               Variant="Variant.Filled"
+                               Icon="@Icons.Material.Filled.MyLocation"
+                               Size="Size.Large"
+                               AriaLabel="Get Weather by Location" />
             </MudItem>
         </MudGrid>
 
-        @if (loading)
+        @if (isLoading)
         {
-            <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Medium" Class="d-flex mx-auto mt-5" />
+            <MudSkeleton Width="100%" Height="200px" Class="mb-3" />
         }
         else if (currentWeather != null && dailySummary != null)
         {
@@ -34,7 +60,7 @@
                 <MudText Align="Align.Center" Typo="Typo.h5">@currentWeather.Name</MudText>
                 <MudStack Spacing="2" AlignItems="AlignItems.Center">
                     <MudAvatar Size="Size.Large" Class="weather-icon">
-                        <MudImage Src="@GetIconUrl(currentWeather.Weather?[0].Icon ?? "")"></MudImage>
+                        <MudImage Src="@GetIconUrl(currentWeather.Weather?[0].Icon ?? "")" Alt="@currentWeather.Weather?[0].Description" />
                     </MudAvatar>
                     <MudText Typo="Typo.h6">@currentWeather.Main?.Temp°F</MudText>
                     <MudText Typo="Typo.h6">Humidity @currentWeather.Main?.Humidity%</MudText>
@@ -48,13 +74,19 @@
                 @foreach (var day in dailySummary)
                 {
                     <MudItem xs="12" sm="6" md="4" lg="3">
-                        <MudPaper Class="pa-2 forecast-card" Elevation="2" onclick="@(() => ToggleDay(day.Key))" Style="cursor: pointer;">
-                            <MudText Typo="Typo.subtitle1">@DateTime.Parse(day.Key).ToString("dddd MMM d")</MudText>
-                            <MudAvatar Size="Size.Medium" Class="weather-icon">
-                                <MudImage Src="@GetIconUrl(day.Value.Icon ?? "")"></MudImage>
-                            </MudAvatar>
-                            <MudText Typo="Typo.body2">High: @day.Value.High°F</MudText>
-                            <MudText Typo="Typo.body2">Low: @day.Value.Low°F</MudText>
+                        <MudPaper Class="pa-2 forecast-card"
+                                  Elevation="2"
+                                  Style="cursor: pointer;"
+                                  @onclick="() => ToggleDay(day.Key)">
+                            <MudStack Spacing="2" AlignItems="AlignItems.Center">
+                                <MudAvatar Size="Size.Medium" Class="weather-icon">
+                                    <MudImage Src="@GetIconUrl(day.Value.Icon ?? "")" Alt="@day.Value.Icon" />
+                                </MudAvatar>
+                                <MudText Typo="Typo.subtitle1">@DateTime.Parse(day.Key).ToString("dddd MMM d")</MudText>
+                                <MudText Typo="Typo.body2">High: @day.Value.High°F</MudText>
+                                <MudText Typo="Typo.body2">Low: @day.Value.Low°F</MudText>
+                            </MudStack>
+
                         </MudPaper>
                     </MudItem>
                 }
@@ -63,7 +95,7 @@
             <!-- Hourly Forecast Expanded Section -->
             @if (!string.IsNullOrEmpty(expandedDay))
             {
-                <MudPaper Class="pa-4 mt-4" Elevation="1">
+                <MudPaper Class="pa-4 mt-4 mud-animate-fadein" Elevation="1">
                     <MudText Typo="Typo.h6">Hourly Forecast for @DateTime.Parse(expandedDay).ToString("dddd MMM d"):</MudText>
                     <MudGrid Spacing="3">
                         @if (dailySummary.ContainsKey(expandedDay) && dailySummary[expandedDay]?.Details is not null)
@@ -75,10 +107,10 @@
                                         <MudText Typo="Typo.caption">@DateTime.Parse(hourly.Dt_Txt ?? "").ToString("h:mm tt")</MudText>
                                         <br />
                                         <MudAvatar Size="Size.Small">
-                                            <MudImage Src="@GetIconUrl(hourly.Weather?[0]?.Icon ?? "")"></MudImage>
+                                            <MudImage Src="@GetIconUrl(hourly.Weather?[0]?.Icon ?? "")" Alt="@hourly.Weather?[0]?.Description" />
                                         </MudAvatar>
                                         <MudText Typo="Typo.body2">@hourly.Main?.Temp°F</MudText>
-                                        <MudText Typo="Typo.caption">@hourly.Weather?[0].Description</MudText>
+                                        <MudText Typo="Typo.caption">@hourly.Weather?[0]?.Description</MudText>
                                     </MudPaper>
                                 </MudItem>
                             }
@@ -92,25 +124,55 @@
 
 @code {
     private string City = "";
+    private CitySuggestion? SelectedCity { get; set; }
     private WeatherData? currentWeather;
     private Dictionary<string, DailyForecast>? dailySummary;
     private string? errorMessage;
     private string expandedDay = ""; // Track the currently expanded day
-    private bool loading = false;
-    private bool isGetWeatherDisabled = true;
+    private bool isLoading = false;
 
-    private void OnCityChanged(string city)
+    private void ClearSelectedCity()
     {
-        City = city;
-        isGetWeatherDisabled = string.IsNullOrWhiteSpace(City);
+        SelectedCity = null;
     }
 
-    private async Task GetWeather()
+    private void OnInputTextChanged(string input)
     {
-        loading = true;
+        City = input;
+
+        // If the input text is cleared or no valid city is selected, reset SelectedCity to null
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            SelectedCity = null;
+        }
+    }
+
+    private async Task<IEnumerable<CitySuggestion>>? SearchCitySuggestions(string value, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            SelectedCity = null;
+            return [];
+        }
+
+        // Logic to fetch city suggestions
+        return await WeatherService.GetCitySuggestionsAsync(value, WeatherService.GetOptions(), cancellationToken);
+    }
+
+    private async Task GetWeatherAsync()
+    {
+        isLoading = true;
+        errorMessage = null;
         try
         {
-            (currentWeather, dailySummary, errorMessage) = await WeatherService.GetWeatherAsync(City);
+            if(SelectedCity is not null)
+            {
+                (currentWeather, dailySummary, errorMessage) = await WeatherService.GetWeatherAsync(lat: double.Parse(SelectedCity.Lat), lon: double.Parse(SelectedCity.Lng));
+            }
+            else
+            {
+                (currentWeather, dailySummary, errorMessage) = await WeatherService.GetWeatherAsync(City);                
+            }
 
             if (!string.IsNullOrEmpty(errorMessage))
             {
@@ -119,22 +181,34 @@
 
             expandedDay = ""; // Reset expanded day when new data is fetched
         }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+            Snackbar.Add(errorMessage, Severity.Error);
+        }
         finally
         {
-            loading = false;
+            isLoading = false;
         }
     }
 
-    private async Task GetWeatherByLocation()
+    private async Task GetWeatherByLocationAsync()
     {
-        loading = true;
+        isLoading = true;
+        errorMessage = null;
         try
         {
             // Call JavaScript to get the user's location (lat/lon)
-            var location = await JSRuntime.InvokeAsync<Location>("getUserLocation", Array.Empty<object>());
+            var location = await JSRuntime.InvokeAsync<Location>("getUserLocation");
 
             // Fetch weather data using the user's latitude and longitude
             (currentWeather, dailySummary, errorMessage) = await WeatherService.GetWeatherAsync(lat: location.Lat, lon: location.Lon);
+
+            if (!string.IsNullOrEmpty(errorMessage))
+            {
+                Snackbar.Add(errorMessage, Severity.Error);
+            }
+
             expandedDay = ""; // Reset expanded day when new data is fetched
         }
         catch (Exception ex)
@@ -144,15 +218,11 @@
         }
         finally
         {
-            loading = false;
+            isLoading = false;
         }
     }
 
-    private void ToggleDay(string day)
-    {
-        expandedDay = expandedDay == day ? "" : day; // Toggle the expanded day
-        StateHasChanged();
-    }
+    private void ToggleDay(string day) => expandedDay = expandedDay == day ? "" : day; // Toggle the expanded day
 
     private string GetIconUrl(string icon) => $"https://openweathermap.org/img/wn/{icon}.png";
 }
