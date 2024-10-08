@@ -3,7 +3,7 @@
 @using MudBlazor.Components
 
 
-<MudThemeProvider @rendermode="InteractiveServer" />
+<MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="CustomTheme" />
 <MudPopoverProvider @rendermode="InteractiveServer" />
 <MudDialogProvider @rendermode="InteractiveServer" />
 <MudSnackbarProvider @rendermode="InteractiveServer" />
@@ -20,3 +20,84 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@code {
+    private bool _isDarkMode;
+    private MudThemeProvider? _mudThemeProvider;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && _mudThemeProvider is not null)
+        {
+            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+            await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
+            StateHasChanged();
+        }
+    }
+
+    private Task OnSystemPreferenceChanged(bool newValue)
+    {
+        _isDarkMode = newValue;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private MudTheme CustomTheme = new MudTheme()
+        {
+            PaletteLight = new PaletteLight()
+            {
+                Primary = Colors.Indigo.Accent2, // Indigo as a cool, modern primary color
+                Secondary = Colors.Pink.Accent2, // Pink for a nice contrast in accent elements
+                Background = Colors.Gray.Lighten4, // Light gray for background to keep things soft
+                Surface = Colors.Shades.White, // White for elevated components like cards
+                AppbarBackground = Colors.Indigo.Darken1, // Darker Indigo for app bar
+                AppbarText = Colors.Shades.White, // White text on app bar
+                DrawerBackground = Colors.Shades.White, // White for the drawer background for consistency
+                DrawerText = Colors.Gray.Darken3, // Darker gray text for drawers
+                TextPrimary = Colors.Gray.Darken3, // Dark gray for the main text color
+                TextSecondary = Colors.Gray.Darken1, // Slightly lighter gray for secondary text
+                ActionDefault = Colors.Indigo.Accent3, // Action color to keep interaction elements visible
+                ActionDisabled = Colors.Gray.Lighten2, // Light gray for disabled actions
+                ActionDisabledBackground = Colors.Gray.Lighten4, // Light gray background for disabled actions
+                Divider = Colors.Gray.Lighten2, // Subtle dividers
+                Success = Colors.Green.Accent3, // Bright green for success messages
+                Warning = Colors.Orange.Accent3, // Orange for warnings
+                Error = Colors.Red.Accent2, // Red for errors to grab attention
+                Info = Colors.Blue.Accent2, // Light blue for informational messages
+            },
+            LayoutProperties = new LayoutProperties()
+            {
+                DefaultBorderRadius = "6px",
+            },
+            PaletteDark = new PaletteDark()
+            {
+                Primary = Colors.DeepPurple.Accent2, // Rich purple for primary elements
+                Secondary = Colors.Teal.Accent3, // Teal as a vibrant secondary color
+                Background = Colors.Gray.Darken4, // Dark gray background for a nice overall feel
+                Surface = Colors.Gray.Darken2, // Slightly lighter gray for surfaces like cards
+                AppbarBackground = Colors.DeepPurple.Darken3, // Deep purple for the app bar
+                AppbarText = Colors.Shades.White, // White text for better readability on the app bar
+                DrawerBackground = Colors.Gray.Darken3, // Drawer background to match the dark theme
+                DrawerText = Colors.Shades.White, // White text in the drawer
+                TextPrimary = Colors.Shades.White, // Main text color
+                TextSecondary = Colors.Gray.Lighten2, // Lighter gray for secondary text
+                ActionDefault = Colors.DeepPurple.Lighten1, // Default action color to highlight interactive elements
+                ActionDisabled = Colors.Gray.Darken1, // Muted color for disabled elements
+                ActionDisabledBackground = Colors.Gray.Darken3, // Background for disabled buttons
+                Divider = Colors.Gray.Darken1, // Divider color for a subtle effect
+                Success = Colors.Green.Accent3, // Vibrant green for success messages
+                Warning = Colors.Amber.Accent2, // Amber for warnings
+                Error = Colors.Red.Accent2, // Red for errors
+                Info = Colors.LightBlue.Accent3 // Light blue for informational messages
+            },
+            Typography = new Typography()
+            {
+                Default = new Default() {  FontFamily = new[] { "Roboto", "Arial", "sans-serif" }, FontSize = "0.95rem" },
+                H1 = new H1() { FontSize = "2.5rem", FontWeight = 700, LetterSpacing = "-0.5px" },
+                H2 = new H2() { FontSize = "2.0rem", FontWeight = 700 },
+                Button = new Button() { FontSize = "1rem", FontWeight = 600 },
+                Subtitle1 = new Subtitle1() { FontWeight = 500 }
+            }
+        };
+}
+

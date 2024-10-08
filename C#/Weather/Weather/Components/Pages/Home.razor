@@ -11,14 +11,14 @@
 
 <MudText Typo="Typo.h4" GutterBottom="true" Align="Align.Center">Weather Forecast</MudText>
 <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6" >
-    <MudPaper Class="pa-4" Elevation="3">
+    <MudPaper  Class="pa-4" Elevation="3">
         <MudGrid AlignItems="Center" Justify="Justify.SpaceBetween" Class="mb-4">
             <MudItem xs="12" sm="8">
                 <MudTextField @bind-Value="City" Placeholder="Enter city" Label="City"
-                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.LocationCity" Size="Size.Large" />
+                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.LocationCity" Size="Size.Large" Immediate="true" TextChanged="OnCityChanged" />
             </MudItem>
             <MudItem xs="12" sm="4" Class="d-flex justify-end">
-                <MudButton OnClick="GetWeather" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" Class="mx-2">Get Weather</MudButton>
+                <MudButton OnClick="GetWeather" Disabled="@isGetWeatherDisabled" Color="Color.Primary" Variant="Variant.Filled" Size="Size.Small" Class="mx-2">Get Weather</MudButton>
                 <MudIconButton OnClick="GetWeatherByLocation" Color="Color.Primary" Variant="Variant.Filled" Icon="@Icons.Material.Filled.MyLocation" Size="Size.Large"/>
             </MudItem>
         </MudGrid>
@@ -31,12 +31,13 @@
         {
             <!-- Current Weather Section -->
             <MudPaper Class="pa-4 mt-5" Elevation="2">
-                <MudText Typo="Typo.h5">@currentWeather.Name</MudText>
+                <MudText Align="Align.Center" Typo="Typo.h5">@currentWeather.Name</MudText>
                 <MudStack Spacing="2" AlignItems="AlignItems.Center">
-                    <MudText Typo="Typo.h6">Current Temp: @currentWeather.Main?.Temp°F</MudText>
                     <MudAvatar Size="Size.Large" Class="weather-icon">
                         <MudImage Src="@GetIconUrl(currentWeather.Weather?[0].Icon ?? "")"></MudImage>
                     </MudAvatar>
+                    <MudText Typo="Typo.h6">@currentWeather.Main?.Temp°F</MudText>
+                    <MudText Typo="Typo.h6">Humidity @currentWeather.Main?.Humidity%</MudText>
                     <MudText Typo="Typo.subtitle2">@currentWeather.Weather?[0].Description</MudText>
                 </MudStack>
             </MudPaper>
@@ -71,7 +72,8 @@
                             {
                                 <MudItem xs="12" sm="6" md="4" lg="2">
                                     <MudPaper Class="pa-2" Elevation="1" Style="text-align: center;">
-                                        <MudText Typo="Typo.caption">@DateTime.Parse(hourly.Dt_Txt ?? "").ToString("HH:mm")</MudText>
+                                        <MudText Typo="Typo.caption">@DateTime.Parse(hourly.Dt_Txt ?? "").ToString("h:mm tt")</MudText>
+                                        <br />
                                         <MudAvatar Size="Size.Small">
                                             <MudImage Src="@GetIconUrl(hourly.Weather?[0]?.Icon ?? "")"></MudImage>
                                         </MudAvatar>
@@ -89,12 +91,19 @@
 </MudContainer>
 
 @code {
-    private string City = "New York";
+    private string City = "";
     private WeatherData? currentWeather;
     private Dictionary<string, DailyForecast>? dailySummary;
     private string? errorMessage;
     private string expandedDay = ""; // Track the currently expanded day
     private bool loading = false;
+    private bool isGetWeatherDisabled = true;
+
+    private void OnCityChanged(string city)
+    {
+        City = city;
+        isGetWeatherDisabled = string.IsNullOrWhiteSpace(City);
+    }
 
     private async Task GetWeather()
     {

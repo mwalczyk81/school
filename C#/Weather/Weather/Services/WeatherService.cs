@@ -69,9 +69,10 @@
                     // Calculate high/low temperatures for each day and build the daily summary
                     foreach (var group in forecastGrouped)
                     {
-                        var temps = group.Value.Select(entry => entry.Main?.Temp).ToList();
-                        var highTemp = temps.Max();
-                        var lowTemp = temps.Min();
+                        var highs = group.Value.Select(entry => entry.Main?.Temp_Max).ToList();
+                        var lows = group.Value.Select(entry => entry.Main?.Temp_Min).ToList();
+                        var highTemp = highs.Max();
+                        var lowTemp = lows.Min();
                         var weatherIcon = group.Value.First().Weather?[0].Icon;
 
                         dailySummary[group.Key] = new DailyForecast
