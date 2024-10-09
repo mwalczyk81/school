@@ -1,6 +1,6 @@
 ﻿namespace Weather.Models
 {
-    public class ForecastItem
+    public record ForecastItem
     {
         public string? Dt_Txt { get; set; } // Forecast timestamp
         public Main? Main { get; set; }

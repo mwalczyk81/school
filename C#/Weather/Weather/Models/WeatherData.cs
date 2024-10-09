@@ -1,6 +1,6 @@
 ﻿namespace Weather.Models
 {
-    public class WeatherData
+    public record WeatherData
     {
         public Main? Main { get; set; }
         public Weather[]? Weather { get; set; }

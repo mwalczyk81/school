@@ -1,6 +1,6 @@
 ﻿namespace Weather.Models
 {
-    public class DailyForecast
+    public record DailyForecast
     {
         public float? High { get; set; }
         public float? Low { get; set; }

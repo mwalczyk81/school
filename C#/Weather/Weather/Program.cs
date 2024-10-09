@@ -1,5 +1,8 @@
 using MudBlazor;
 using MudBlazor.Services;
+using Polly;
+using Polly.Extensions.Http;
+using System.Text.Json;
 using Weather.Components;
 using Weather.Services;
 
@@ -9,8 +12,25 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://api.openweathermap.org/data/2.5/") });
-builder.Services.AddScoped<WeatherService>();
+builder.Services.AddHttpClient<IWeatherService, WeatherService>("Weather", client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(10);
+    client.BaseAddress = new Uri("https://api.openweathermap.org/data/2.5/");
+}).AddResilienceHandler("RetryPipline", (p, c) => GetRetryPolicy());
+
+builder.Services.AddHttpClient<ICitySuggestionService, CitySuggestionService>("Cities", client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(10);
+    client.BaseAddress = new Uri("http://api.geonames.org/searchJSON");
+}).AddResilienceHandler("RetryPipline", (p, c) => GetRetryPolicy());
+
+builder.Services.AddSingleton(new JsonSerializerOptions
+{
+    PropertyNameCaseInsensitive = true
+});
+
+builder.Services.AddScoped<IWeatherService, WeatherService>();
+builder.Services.AddScoped<ICitySuggestionService, CitySuggestionService>();
 builder.Services.AddMudServices(config =>
 {
     config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomCenter;
@@ -42,3 +62,10 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+
+static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
+{
+    return HttpPolicyExtensions
+        .HandleTransientHttpError()
+        .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+}

@@ -1,126 +1,115 @@
 ﻿namespace Weather.Services
 {
+    using Microsoft.AspNetCore.WebUtilities;
     using System.Globalization;
     using System.Text.Json;
     using Weather.Models;
 
-    public class WeatherService(HttpClient httpClient)
+    public interface IWeatherService
     {
-        private readonly HttpClient _httpClient = httpClient;
+        Task<WeatherResponse?> GetWeatherAsync(string? city = null, double? lat = null, double? lon = null);
+    }
+
+    public class WeatherService(IHttpClientFactory httpClientFactory, JsonSerializerOptions jsonSerializerOptions) : IWeatherService
+    {
+        private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+        private readonly JsonSerializerOptions _jsonSerializerOptions = jsonSerializerOptions;
         private const string ApiKey = "906b6939735602a519447e37a839d229";
 
-        public JsonSerializerOptions GetOptions()
+        public async Task<WeatherResponse?> GetWeatherAsync(string? city = null, double? lat = null, double? lon = null)
         {
-            return new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
-        }
+            string currentUrl, forecastUrl;
+            var queryParams = new Dictionary<string, string?>
+                {
+                    { "appid", ApiKey },
+                    { "units", "imperial" }
+                };
 
-        public async Task<IEnumerable<CitySuggestion>> GetCitySuggestionsAsync(string input, JsonSerializerOptions options, CancellationToken cancellationToken)
-        {
-            if (string.IsNullOrWhiteSpace(input) || input.Length < 2)
+            if (!string.IsNullOrEmpty(city))
             {
-                return [];
-            }
+                queryParams.Add("q", city);
 
-            var username = "mwalczyk";  // Use your GeoNames username
-            var url = $"http://api.geonames.org/searchJSON?q={input}&maxRows=5&username={username}&featureClass=P&style=full";
-
-            using var client = new HttpClient();
-            var response = await client.GetAsync(url, cancellationToken);
-            var result = await JsonSerializer.DeserializeAsync<GeoNamesResult>(await response.Content.ReadAsStreamAsync(cancellationToken), options, cancellationToken);
-
-            if (result?.Geonames == null || !result.Geonames.Any())
-                return [];
-
-            return result.Geonames.Select(g => new CitySuggestion
-            {
-                DisplayName = $"{g.Name}, {g.AdminName1}, {g.CountryName}", // City, State, Country
-                Lat = g.Lat,
-                Lng = g.Lng
-            });
-        }
-
-        public async Task<(WeatherData?, Dictionary<string, DailyForecast>?, string?)> GetWeatherAsync(string? city = null, double? lat = null, double? lon = null)
-        {
-            string currentUrl;
-            string forecastUrl;
-
-            if (city != null)
-            {
-                currentUrl = $"weather?q={city}&appid={ApiKey}&units=imperial";
-                forecastUrl = $"forecast?q={city}&appid={ApiKey}&units=imperial";
+                currentUrl = QueryHelpers.AddQueryString("weather", queryParams);
+                forecastUrl = QueryHelpers.AddQueryString("forecast", queryParams);
             }
             else if (lat.HasValue && lon.HasValue)
             {
-                currentUrl = $"weather?lat={lat}&lon={lon}&appid={ApiKey}&units=imperial";
-                forecastUrl = $"forecast?lat={lat}&lon={lon}&appid={ApiKey}&units=imperial";
+                queryParams.Add("lat", lat.Value.ToString());
+                queryParams.Add("lon", lon.Value.ToString());
+
+                currentUrl = QueryHelpers.AddQueryString("weather", queryParams);
+                forecastUrl = QueryHelpers.AddQueryString("forecast", queryParams);
             }
             else
             {
-                return (null, null, "City or location not provided.");
+                throw new ArgumentException("Location or city must be provided");
             }
 
-            var currentResponse = await _httpClient.GetAsync(currentUrl);
-            var forecastResponse = await _httpClient.GetAsync(forecastUrl);
+            var currentWeather = await FetchDataAsync<WeatherData>(currentUrl);
+            var forecastWeather = await FetchDataAsync<ForecastData>(forecastUrl);
 
-            if (currentResponse.IsSuccessStatusCode && forecastResponse.IsSuccessStatusCode)
+            if (currentWeather != null && forecastWeather != null)
             {
-                var options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
-                var currentWeather = await JsonSerializer.DeserializeAsync<WeatherData>(await currentResponse.Content.ReadAsStreamAsync(), options);
-                var forecastWeather = await JsonSerializer.DeserializeAsync<ForecastData>(await forecastResponse.Content.ReadAsStreamAsync(), options);
-                var timezoneOffset = forecastWeather?.City?.Timezone ?? 0;
-                var forecastGrouped = new Dictionary<string, List<ForecastItem>>();
-                var dailySummary = new Dictionary<string, DailyForecast>();
+                var dailySummary = ProcessForecastData(forecastWeather);
+                return new WeatherResponse { WeatherData = currentWeather, DailyForecasts = dailySummary };
+            }
 
-                if (forecastWeather?.List != null)
+            return null;
+        }
+
+        private async Task<T?> FetchDataAsync<T>(string url)
+        {
+            using var client = _httpClientFactory.CreateClient("Weather");
+            var response = await client.GetAsync(url);
+
+            response.EnsureSuccessStatusCode();
+
+            var result = await JsonSerializer.DeserializeAsync<T>(await response.Content.ReadAsStreamAsync(), _jsonSerializerOptions);
+
+            if (result == null)
+            {
+                return default;
+            }
+
+            return result;
+        }
+
+        private static Dictionary<string, DailyForecast> ProcessForecastData(ForecastData? forecastWeather)
+        {
+            var dailySummary = new Dictionary<string, DailyForecast>();
+
+            if (forecastWeather?.List == null)
+                return dailySummary;
+
+            var forecastGrouped = forecastWeather.List
+                .GroupBy(entry =>
                 {
-                    foreach (var entry in forecastWeather.List)
-                    {
-                        DateTime utcTime = DateTime.ParseExact(entry.Dt_Txt ?? "", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                    // Adjust the time using the timezone offset
+                    var utcTime = DateTime.ParseExact(entry.Dt_Txt ?? "", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                    var localTime = utcTime.AddSeconds(forecastWeather.City?.Timezone ?? 0);
+                    entry.Dt_Txt = localTime.ToString("yyyy-MM-dd HH:mm:ss");
+                    return localTime.ToString("yyyy-MM-dd");
+                });
 
-                        // Adjust the time using the timezone offset (in seconds)
-                        DateTime localTime = utcTime.AddSeconds(timezoneOffset);
-
-                        // Update `dt_txt` to reflect the adjusted local time
-                        entry.Dt_Txt = localTime.ToString("yyyy-MM-dd HH:mm:ss");
-
-                        // Extract the local date part
-                        string localDateStr = localTime.ToString("yyyy-MM-dd");
-
-                        // Group by the local date
-                        if (!forecastGrouped.TryGetValue(localDateStr, out List<ForecastItem>? value))
-                        {
-                            value = ([]);
-                            forecastGrouped[localDateStr] = value;
-                        }
-
-                        value.Add(entry);
-                    }
-
-                    // Calculate high/low temperatures for each day and build the daily summary
-                    foreach (var group in forecastGrouped)
-                    {
-                        var highs = group.Value.Select(entry => entry.Main?.Temp_Max).ToList();
-                        var lows = group.Value.Select(entry => entry.Main?.Temp_Min).ToList();
-                        var highTemp = highs.Max();
-                        var lowTemp = lows.Min();
-                        var weatherIcon = group.Value.First().Weather?[0].Icon;
-
-                        dailySummary[group.Key] = new DailyForecast
-                        {
-                            High = highTemp,
-                            Low = lowTemp,
-                            Icon = weatherIcon ?? "",
-                            Details = group.Value
-                        };
-                    }
-                }
-
-                return (currentWeather, dailySummary, null);
-            }
-            else
+            // Calculate high/low temperatures for each day and build the daily summary
+            foreach (var group in forecastGrouped)
             {
-                return (null, null, "Failed to retrieve weather data.");
+                var highs = group.Select(entry => entry.Main?.Temp_Max).ToList();
+                var lows = group.Select(entry => entry.Main?.Temp_Min).ToList();
+                var highTemp = highs.Max();
+                var lowTemp = lows.Min();
+                var weatherIcon = group.First().Weather?[0].Icon;
+
+                dailySummary[group.Key] = new DailyForecast
+                {
+                    High = highTemp,
+                    Low = lowTemp,
+                    Icon = weatherIcon ?? "",
+                    Details = [.. group]
+                };
             }
+
+            return dailySummary;
         }
     }
 }

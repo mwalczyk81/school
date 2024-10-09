@@ -1,6 +1,6 @@
 ﻿namespace Weather.Models
 {
-    public class ForecastData
+    public record ForecastData
     {
         public City? City { get; set; }
         public List<ForecastItem>? List { get; set; }

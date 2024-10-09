@@ -1,6 +1,6 @@
 ﻿namespace Weather.Models
 {
-    public class Main
+    public record Main
     {
         public float? Temp { get; set; }
         public float? Temp_Min { get; set; }
