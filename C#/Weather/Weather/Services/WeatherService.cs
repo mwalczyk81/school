@@ -66,12 +66,7 @@
 
             var result = await JsonSerializer.DeserializeAsync<T>(await response.Content.ReadAsStreamAsync(), _jsonSerializerOptions);
 
-            if (result == null)
-            {
-                return default;
-            }
-
-            return result;
+            return result is null ? default : result;
         }
 
         private static Dictionary<string, DailyForecast> ProcessForecastData(ForecastData? forecastWeather)
@@ -87,24 +82,20 @@
                     // Adjust the time using the timezone offset
                     var utcTime = DateTime.ParseExact(entry.Dt_Txt ?? "", "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
                     var localTime = utcTime.AddSeconds(forecastWeather.City?.Timezone ?? 0);
+
                     entry.Dt_Txt = localTime.ToString("yyyy-MM-dd HH:mm:ss");
+
                     return localTime.ToString("yyyy-MM-dd");
                 });
 
             // Calculate high/low temperatures for each day and build the daily summary
             foreach (var group in forecastGrouped)
             {
-                var highs = group.Select(entry => entry.Main?.Temp_Max).ToList();
-                var lows = group.Select(entry => entry.Main?.Temp_Min).ToList();
-                var highTemp = highs.Max();
-                var lowTemp = lows.Min();
-                var weatherIcon = group.First().Weather?[0].Icon;
-
                 dailySummary[group.Key] = new DailyForecast
                 {
-                    High = highTemp,
-                    Low = lowTemp,
-                    Icon = weatherIcon ?? "",
+                    High = group.Select(entry => entry.Main?.Temp_Max).ToList().Max(),
+                    Low = group.Select(entry => entry.Main?.Temp_Min).ToList().Min(),
+                    Icon = group.First().Weather?[0].Icon ?? "",
                     Details = [.. group]
                 };
             }
