@@ -71,7 +71,7 @@
             }
             };
 
-        _weatherService.GetWeatherAsync(Arg.Any<string?>(), Arg.Any<double?>(), Arg.Any<double?>()).Returns(Task.FromResult(weatherResponse!));
+        _weatherService.GetWeatherAsync(Arg.Any<string>(), Arg.Any<double>(), Arg.Any<double>()).Returns(await Task.FromResult(weatherResponse));
 
         var component = _testContext.RenderComponent<Home>();
 
@@ -95,12 +95,12 @@
         };
 
         _citySuggestionService.GetCitySuggestionsAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns(Task.FromResult<IEnumerable<CitySuggestion?>>(citySuggestions));
+                   .Returns(await Task.FromResult<IEnumerable<CitySuggestion>>(citySuggestions!));
 
         var component = _testContext.RenderComponent<Home>();
 
         // Act
-        var suggestions = await component.Instance.SearchCitySuggestions("Lon", CancellationToken.None);
+        var suggestions = await component.Instance.SearchCitySuggestions("Lon", CancellationToken.None)!;
 
         // Assert
         Assert.NotNull(suggestions);
