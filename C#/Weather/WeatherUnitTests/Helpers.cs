@@ -4,29 +4,26 @@ namespace WeatherUnitTests
 {
     internal class Helpers
     {
-        internal class HttpMessageHandlerStub : HttpMessageHandler
+        internal class HttpMessageHandlerStub(Dictionary<string, HttpResponseMessage> responses, HttpResponseMessage? defaultResponse = null) : HttpMessageHandler
         {
-            private readonly HttpResponseMessage _currentWeatherResponse;
-            private readonly HttpResponseMessage _forecastWeatherResponse;
-
-            public HttpMessageHandlerStub(HttpResponseMessage currentWeatherResponse, HttpResponseMessage forecastWeatherResponse)
-            {
-                _currentWeatherResponse = currentWeatherResponse;
-                _forecastWeatherResponse = forecastWeatherResponse;
-            }
+            private readonly Dictionary<string, HttpResponseMessage> _responses = responses;
+            private readonly HttpResponseMessage _defaultResponse = defaultResponse ?? new HttpResponseMessage(HttpStatusCode.NotFound);
 
             protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
             {
-                if (request.RequestUri.ToString().Contains("weather?"))
+                if (request.RequestUri != null)
                 {
-                    return await Task.FromResult(_currentWeatherResponse);
-                }
-                else if (request.RequestUri.ToString().Contains("forecast?"))
-                {
-                    return await Task.FromResult(_forecastWeatherResponse);
+                    var requestUri = request.RequestUri.ToString();
+                    foreach (var response in _responses)
+                    {
+                        if (requestUri.Contains(response.Key))
+                        {
+                            return await Task.FromResult(response.Value);
+                        }
+                    }
                 }
 
-                return new HttpResponseMessage(HttpStatusCode.NotFound);
+                return _defaultResponse;
             }
         }
     }

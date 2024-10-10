@@ -2,6 +2,7 @@
 
 @using Weather.Models
 @using Weather.Services
+@using MudBlazor
 
 @inject IWeatherService WeatherService
 @inject ICitySuggestionService CitySuggestionService
@@ -58,7 +59,7 @@
         {
             <!-- Current Weather Section -->
             <MudPaper Class="pa-4 mt-5" Elevation="2">
-                <MudText Align="Align.Center" Typo="Typo.h5">@_weatherData.WeatherResponse.WeatherData.Name</MudText>
+                <MudText Align="Align.Center" id="CityLabel" Typo="Typo.h5">@_weatherData.WeatherResponse.WeatherData.Name</MudText>
                 <MudStack Spacing="2" AlignItems="AlignItems.Center">
                     <MudAvatar Size="Size.Large" Class="weather-icon">
                         <MudImage Src="@GetIconUrl(_weatherData.WeatherResponse.WeatherData.Weather?[0].Icon ?? "")" Alt="@_weatherData.WeatherResponse.WeatherData.Weather?[0].Description" />
@@ -124,9 +125,9 @@
 </MudContainer>
 
 @code {
-    private CitySuggestion? SelectedCity { get; set; }
-    private WeatherDataModel _weatherData = new WeatherDataModel();
-    private const string WeatherIconBaseUrl = "https://openweathermap.org/img/wn/";
+    public CitySuggestion? SelectedCity { get; set; }
+    internal WeatherDataModel _weatherData = new WeatherDataModel();
+    internal const string WeatherIconBaseUrl = "https://openweathermap.org/img/wn/";
 
     private void ClearSelectedCity()
     {
@@ -141,7 +142,7 @@
         }
     }
 
-    private async Task<IEnumerable<CitySuggestion?>>? SearchCitySuggestions(string value, CancellationToken cancellationToken)
+    public async Task<IEnumerable<CitySuggestion?>>? SearchCitySuggestions(string value, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -152,7 +153,7 @@
         return await CitySuggestionService.GetCitySuggestionsAsync(value, cancellationToken);
     }
 
-    private async Task GetWeatherAsync()
+    public async Task GetWeatherAsync()
     {
         StartLoading();
         try
@@ -183,7 +184,7 @@
         }
     }
 
-    private async Task GetWeatherByLocationAsync()
+    internal async Task GetWeatherByLocationAsync()
     {
         StartLoading();
 

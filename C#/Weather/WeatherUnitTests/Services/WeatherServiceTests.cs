@@ -41,7 +41,13 @@
                 Content = new StringContent(forecastWeatherJson)
             };
 
-            var httpClient = Substitute.For<HttpClient>(new HttpMessageHandlerStub(currentWeatherResponse, forecastWeatherResponse));
+            var responses = new Dictionary<string, HttpResponseMessage>
+            {
+                { "weather?", currentWeatherResponse},
+                { "forecast?", forecastWeatherResponse}
+            };
+
+            var httpClient = Substitute.For<HttpClient>(new HttpMessageHandlerStub(responses));
             httpClient.BaseAddress = new Uri("https://api.openweathermap.org/data/2.5/");
 
             _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
@@ -75,7 +81,13 @@
                 Content = new StringContent(forecastWeatherJson)
             };
 
-            var httpClient = Substitute.For<HttpClient>(new HttpMessageHandlerStub(currentWeatherResponse, forecastWeatherResponse));
+            var responses = new Dictionary<string, HttpResponseMessage>
+            {
+                { "weather?", currentWeatherResponse},
+                { "forecast?", forecastWeatherResponse}
+            };
+
+            var httpClient = Substitute.For<HttpClient>(new HttpMessageHandlerStub(responses));
             httpClient.BaseAddress = new Uri("https://api.openweathermap.org/data/2.5/");
 
             _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
@@ -105,7 +117,13 @@
             var currentWeatherResponse = new HttpResponseMessage(HttpStatusCode.NotFound);
             var forecastWeatherResponse = new HttpResponseMessage(HttpStatusCode.NotFound);
 
-            var httpClient = Substitute.For<HttpClient>(new HttpMessageHandlerStub(currentWeatherResponse, forecastWeatherResponse));
+            var responses = new Dictionary<string, HttpResponseMessage>
+            {
+                { "weather?", currentWeatherResponse},
+                { "forecast?", forecastWeatherResponse}
+            };
+
+            var httpClient = Substitute.For<HttpClient>(new HttpMessageHandlerStub(responses));
             httpClient.BaseAddress = new Uri("https://api.openweathermap.org/data/2.5/");
 
             _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
@@ -122,7 +140,13 @@
             var currentWeatherResponse = new HttpResponseMessage(HttpStatusCode.InternalServerError);
             var forecastWeatherResponse = new HttpResponseMessage(HttpStatusCode.InternalServerError);
 
-            var httpClient = Substitute.For<HttpClient>(new HttpMessageHandlerStub(currentWeatherResponse, forecastWeatherResponse));
+            var responses = new Dictionary<string, HttpResponseMessage>
+            {
+                { "weather?", currentWeatherResponse},
+                { "forecast?", forecastWeatherResponse}
+            };
+
+            var httpClient = Substitute.For<HttpClient>(new HttpMessageHandlerStub(responses));
             httpClient.BaseAddress = new Uri("https://api.openweathermap.org/data/2.5/");
 
             _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);

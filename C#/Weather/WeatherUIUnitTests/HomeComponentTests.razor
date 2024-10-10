@@ -1,0 +1,110 @@
+﻿@page "/HomeComponentTests"
+
+@using Bunit
+@using Microsoft.Extensions.DependencyInjection
+@using MudBlazor
+@using MudBlazor.Services
+@using Weather.Components.Pages
+@using Weather.Models
+@using Weather.Services
+@using Xunit
+@using NSubstitute
+@using System.Threading
+
+@code {
+    private TestContext _testContext;
+    private IWeatherService _weatherService;
+    private ICitySuggestionService _citySuggestionService;
+    private IJSRuntime _jsRuntime;
+    private ISnackbar _snackbar;
+
+    public HomeComponentTests()
+    {
+        _testContext = new TestContext();
+        _weatherService = Substitute.For<IWeatherService>();
+        _citySuggestionService = Substitute.For<ICitySuggestionService>();
+        _jsRuntime = Substitute.For<IJSRuntime>();
+        _snackbar = Substitute.For<ISnackbar>();
+
+        _testContext.Services.AddSingleton(_weatherService);
+        _testContext.Services.AddSingleton(_citySuggestionService);
+        _testContext.Services.AddSingleton(_jsRuntime);
+        _testContext.Services.AddSingleton(_snackbar);
+        _testContext.Services.AddMudServices(options => options.PopoverOptions.CheckForPopoverProvider = false);
+    }
+
+    [Fact]
+    public void HomeComponent_RendersCorrectly()
+    {
+        // Arrange
+        var component = _testContext.RenderComponent<Home>();
+
+        // Act
+        var title = component.Find("title");
+
+        // Assert
+        Assert.Equal("Weather Forecast", title.InnerHtml);
+    }
+
+    [Fact]
+    public async Task HomeComponent_GetWeatherAsync_DisplaysWeatherData()
+    {
+        // Arrange
+        var citySuggestion = new CitySuggestion
+            {
+                DisplayName = "London, England, United Kingdom",
+                Lat = "51.5074",
+                Lng = "-0.1278"
+            };
+
+        var weatherResponse = new WeatherResponse
+            {
+                WeatherData = new WeatherData
+                {
+                    Name = "London",
+                    Main = new Main { Temp = 60, Humidity = 80 },
+                    Weather = new List<Weather> { new Weather { Description = "Clear sky", Icon = "01d" } }.ToArray(),
+                },
+                DailyForecasts = new Dictionary<string, DailyForecast>
+            {
+                { "2023-10-01", new DailyForecast { High = 65, Low = 50, Icon = "01d" } }
+            }
+            };
+
+        _weatherService.GetWeatherAsync(Arg.Any<string?>(), Arg.Any<double?>(), Arg.Any<double?>()).Returns(Task.FromResult(weatherResponse!));
+
+        var component = _testContext.RenderComponent<Home>();
+
+        // Act
+        component.Instance.SelectedCity = citySuggestion;
+        await component.Instance.GetWeatherAsync();
+
+        // Assert
+        component.Render();
+        var weatherText = component.Find("#CityLabel");
+        Assert.Equal("London", weatherText.InnerHtml);
+    }
+
+    [Fact]
+    public async Task HomeComponent_SearchCitySuggestions_ReturnsSuggestions()
+    {
+        // Arrange
+        var citySuggestions = new List<CitySuggestion>
+        {
+            new CitySuggestion { DisplayName = "London, England, United Kingdom" }
+        };
+
+        _citySuggestionService.GetCitySuggestionsAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult<IEnumerable<CitySuggestion?>>(citySuggestions));
+
+        var component = _testContext.RenderComponent<Home>();
+
+        // Act
+        var suggestions = await component.Instance.SearchCitySuggestions("Lon", CancellationToken.None);
+
+        // Assert
+        Assert.NotNull(suggestions);
+        Assert.Single(suggestions);
+        Assert.Equal("London, England, United Kingdom", suggestions.First()?.DisplayName);
+    }
+}
