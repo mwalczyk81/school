@@ -2,8 +2,8 @@
 {
     public record DailyForecast
     {
-        public float? High { get; set; }
-        public float? Low { get; set; }
+        public double? High { get; set; }
+        public double? Low { get; set; }
         public string? Icon { get; set; }
         public List<ForecastItem>? Details { get; set; }
     }

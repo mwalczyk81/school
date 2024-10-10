@@ -29,7 +29,7 @@
                                  MinCharacters="2"
                                  OnClearButtonClick="ClearSelectedCity"
                                  SearchFunc="@SearchCitySuggestions"
-                                 Clearable="true" 
+                                 Clearable="true"
                                  TextChanged="OnInputTextChanged" />
             </MudItem>
             <MudItem xs="12" sm="4" Class="d-flex justify-end">
@@ -64,7 +64,7 @@
                     <MudAvatar Size="Size.Large" Class="weather-icon">
                         <MudImage Src="@GetIconUrl(_weatherData.WeatherResponse.WeatherData.Weather?[0].Icon ?? "")" Alt="@_weatherData.WeatherResponse.WeatherData.Weather?[0].Description" />
                     </MudAvatar>
-                    <MudText Typo="Typo.h6">@_weatherData.WeatherResponse.WeatherData.Main?.Temp°F</MudText>
+                    <MudText Typo="Typo.h6">@_weatherData.WeatherResponse.WeatherData.Main?.Temp.GetValueOrDefault().ToString("0")°F</MudText>
                     <MudText Typo="Typo.h6">Humidity @_weatherData.WeatherResponse.WeatherData.Main?.Humidity%</MudText>
                     <MudText Typo="Typo.subtitle2">@_weatherData.WeatherResponse.WeatherData.Weather?[0].Description</MudText>
                 </MudStack>
@@ -76,50 +76,62 @@
                 @foreach (var day in _weatherData.WeatherResponse.DailyForecasts)
                 {
                     <MudItem xs="12" sm="6" md="4" lg="3">
-                        <MudPaper Class="pa-2 forecast-card"
-                                  Elevation="2"
-                                  Style="cursor: pointer;"
-                                  @onclick="() => ToggleDay(day.Key)">
-                            <MudStack Spacing="2" AlignItems="AlignItems.Center">
-                                <MudAvatar Size="Size.Medium" Class="weather-icon">
-                                    <MudImage Src="@GetIconUrl(day.Value.Icon ?? "")" Alt="@day.Value.Icon" />
-                                </MudAvatar>
-                                <MudText Typo="Typo.subtitle1">@DateTime.Parse(day.Key).ToString("dddd MMM d")</MudText>
-                                <MudText Typo="Typo.body2">High: @day.Value.High°F</MudText>
-                                <MudText Typo="Typo.body2">Low: @day.Value.Low°F</MudText>
-                            </MudStack>
+                        <MudExpansionPanels>
+                            <MudExpansionPanel Style="cursor: pointer; text-align: center;"
+                                               Class="pa-2 forecast-card">
+                                <TitleContent>
+                                    <MudStack Spacing="2" AlignItems="AlignItems.Center">
+                                        <!-- Weather Icon -->
+                                        <MudAvatar Size="Size.Medium" Class="weather-icon">
+                                            <MudImage Src="@GetIconUrl(day.Value.Icon ?? "")" Alt="@day.Value.Details?[0].Weather?[0].Description" />
+                                        </MudAvatar>
+                                        <!-- Date -->
+                                        <MudText Typo="Typo.subtitle1">@DateTime.Parse(day.Key).ToString("dddd MMM d")</MudText>
+                                        <!-- High Temperature -->
+                                        <MudText Typo="Typo.body2">High: @day.Value.High.GetValueOrDefault().ToString("0")°F</MudText>
+                                        <!-- Low Temperature -->
+                                        <MudText Typo="Typo.body2">Low: @day.Value.Low.GetValueOrDefault().ToString("0")°F</MudText>
+                                    </MudStack>
+                                </TitleContent>
 
-                        </MudPaper>
+                                <!-- Expanded Content: Hourly Forecast -->
+                                <ChildContent>
+                                    <MudDivider Class="my-2" />
+                                    <MudText Typo="Typo.h6" Class="mt-2">Hourly Forecast:</MudText>
+                                    <MudGrid Spacing="3">
+                                        @if (day.Value.Details != null)
+                                        {
+                                            @foreach (var hourly in day.Value.Details)
+                                            {
+                                                <MudItem xs="12" sm="6" md="4" lg="6">
+                                                    <MudPaper Class="pa-4" Elevation="2" Style="text-align: center; min-height: 250px;">
+                                                        <MudStack Spacing="2" AlignItems="AlignItems.Center" JustifyContent="Center" Style="height: 100%;">
+                                                            <MudAvatar Size="Size.Medium">
+                                                                <MudImage Src="@GetIconUrl(hourly.Weather?[0]?.Icon ?? "")" Alt="@hourly.Weather?[0]?.Description" />
+                                                            </MudAvatar>
+                                                            <MudText Typo="Typo.caption">@DateTime.Parse(hourly.Dt_Txt ?? "").ToString("h:mm tt")</MudText>
+                                                            <MudText Typo="Typo.body2">@Math.Round(hourly.Main?.Temp ?? 0)°F</MudText>
+                                                            <MudText Typo="Typo.caption">@hourly.Weather?[0]?.Description</MudText>
+                                                        </MudStack>
+                                                    </MudPaper>
+                                                </MudItem>
+                                            }
+                                        }
+                                    </MudGrid>
+                                </ChildContent>
+                            </MudExpansionPanel>
+                        </MudExpansionPanels>
                     </MudItem>
                 }
             </MudGrid>
 
-            <!-- Hourly Forecast Expanded Section -->
-            @if (!string.IsNullOrEmpty(_weatherData.ExpandedDay))
-            {
-                <MudPaper Class="pa-4 mt-4 mud-animate-fadein" Elevation="1">
-                    <MudText Typo="Typo.h6">Hourly Forecast for @DateTime.Parse(_weatherData.ExpandedDay).ToString("dddd MMM d"):</MudText>
-                    <MudGrid Spacing="3">
-                        @if (_weatherData.WeatherResponse.DailyForecasts.ContainsKey(_weatherData.ExpandedDay) && _weatherData.WeatherResponse.DailyForecasts[_weatherData.ExpandedDay]?.Details is not null)
-                        {
-                            @foreach (var hourly in _weatherData.WeatherResponse.DailyForecasts[_weatherData.ExpandedDay].Details!)
-                            {
-                                <MudItem xs="12" sm="6" md="4" lg="2">
-                                    <MudPaper Class="pa-2" Elevation="1" Style="text-align: center;">
-                                        <MudText Typo="Typo.caption">@DateTime.Parse(hourly.Dt_Txt ?? "").ToString("h:mm tt")</MudText>
-                                        <br />
-                                        <MudAvatar Size="Size.Small">
-                                            <MudImage Src="@GetIconUrl(hourly.Weather?[0]?.Icon ?? "")" Alt="@hourly.Weather?[0]?.Description" />
-                                        </MudAvatar>
-                                        <MudText Typo="Typo.body2">@hourly.Main?.Temp°F</MudText>
-                                        <MudText Typo="Typo.caption">@hourly.Weather?[0]?.Description</MudText>
-                                    </MudPaper>
-                                </MudItem>
-                            }
-                        }
-                    </MudGrid>
-                </MudPaper>
-            }
+            <!-- 5-Day Temperature Trend Chart -->
+            <MudPaper Class="pa-4 mt-4" Elevation="2" Width="100%">
+                <MudText Typo="Typo.h6" GutterBottom="true">Temperature Trends for the Next 5 Days:</MudText>
+                <MudChart Width="100%" ChartType="ChartType.Line" XAxisLabels="@GetXAxisLabels()"
+                          ChartSeries="@GetTemperatureDataSets()">
+                </MudChart>
+            </MudPaper>
         }
     </MudPaper>
 </MudContainer>
@@ -128,6 +140,19 @@
     public CitySuggestion? SelectedCity { get; set; }
     internal WeatherDataModel _weatherData = new WeatherDataModel();
     internal const string WeatherIconBaseUrl = "https://openweathermap.org/img/wn/";
+    private string[]? Labels { get; set; }
+
+    protected override void OnInitialized()
+    {
+        // Populate the Labels array with the formatted dates from the weather data
+        Labels = _weatherData.WeatherResponse?.DailyForecasts?.Keys
+            .Select(key => DateTime.Parse(key).ToString("MMM d"))
+            .ToArray() ?? [];
+    }
+
+    private string[] GetXAxisLabels() => _weatherData.WeatherResponse?.DailyForecasts?.Keys
+            .Select(key => DateTime.Parse(key).ToString("MMM d"))
+            .ToArray() ?? [];
 
     private void ClearSelectedCity()
     {
@@ -153,18 +178,27 @@
         return await CitySuggestionService.GetCitySuggestionsAsync(value, cancellationToken);
     }
 
+    private List<ChartSeries> GetTemperatureDataSets()
+    {
+        return new List<ChartSeries>
+        {
+            new ChartSeries { Name = "High Temp", Data = GetHighTempData() },
+            new ChartSeries { Name = "Low Temp", Data = GetLowTempData() }
+        };
+    }
+
     public async Task GetWeatherAsync()
     {
         StartLoading();
         try
         {
-            if(SelectedCity is null)
+            if (SelectedCity is null)
             {
                 DisplayError("Please select a city.");
                 return;
             }
 
-            if(SelectedCity.Lng is null || SelectedCity.Lat is null)
+            if (SelectedCity.Lng is null || SelectedCity.Lat is null)
             {
                 DisplayError("Location not found.");
                 return;
@@ -193,7 +227,7 @@
             // Call JavaScript to get the user's location (lat/lon)
             var location = await JSRuntime.InvokeAsync<Location>("getUserLocation");
 
-            if(location.Latitude is null || location.Longitude is null)
+            if (location.Latitude is null || location.Longitude is null)
             {
                 DisplayError("Failed to retrieve location.");
                 return;
@@ -214,6 +248,12 @@
         }
     }
 
+    private string GetPanelText(string dateKey, DailyForecast day)
+    {
+        var date = DateTime.Parse(dateKey).ToString("ddd d");
+        return $"{date} - High: {day.High.GetValueOrDefault().ToString("0")}°F, Low: {day.Low.GetValueOrDefault().ToString("0")}°F";
+    }
+
     private void ToggleDay(string day) => _weatherData.ExpandedDay = _weatherData.ExpandedDay == day ? "" : day;
 
     private string GetIconUrl(string icon) => $"{WeatherIconBaseUrl}{icon}.png";
@@ -221,8 +261,12 @@
     private void StartLoading() => _weatherData.IsLoading = true;
 
     private void StopLoading() => _weatherData.IsLoading = false;
-    
+
     private void ResetExpandedDay() => _weatherData.ExpandedDay = "";
-    
+
     private void DisplayError(string message) => _weatherData.ErrorMessage = message;
+
+    private double[] GetHighTempData() => _weatherData.WeatherResponse?.DailyForecasts?.Values.Select(forecast => Math.Round(forecast.High!.Value)).ToArray() ?? [];
+
+    private double[] GetLowTempData() => _weatherData.WeatherResponse?.DailyForecasts?.Values.Select(forecast => Math.Round(forecast.Low!.Value)).ToArray() ?? [];
 }
