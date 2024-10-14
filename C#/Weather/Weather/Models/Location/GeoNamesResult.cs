@@ -1,4 +1,4 @@
-﻿namespace Weather.Models
+﻿namespace Weather.Models.Location
 {
     public class GeoNamesResult
     {

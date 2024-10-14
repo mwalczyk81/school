@@ -1,6 +1,6 @@
-﻿namespace Weather.Models
+﻿namespace Weather.Models.Location
 {
-    public class Location
+    public class LocationItem
     {
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }

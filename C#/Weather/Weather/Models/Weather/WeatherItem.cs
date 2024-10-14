@@ -1,6 +1,6 @@
-﻿namespace Weather.Models
+﻿namespace Weather.Models.Weather
 {
-    public record Weather
+    public record WeatherItem
     {
         public string? Description { get; set; }
         public string? Icon { get; set; }

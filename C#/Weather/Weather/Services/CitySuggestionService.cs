@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
 using System.Text.Json;
-using Weather.Models;
+using Weather.Models.Location;
 
 namespace Weather.Services
 {

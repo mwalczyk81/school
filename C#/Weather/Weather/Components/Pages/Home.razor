@@ -1,17 +1,11 @@
 ﻿@page "/"
 
+@using ApexCharts
 @using Weather.Models
 @using Weather.Services
 @using MudBlazor
 
-@inject IWeatherService WeatherService
-@inject ICitySuggestionService CitySuggestionService
-@inject IJSRuntime JSRuntime
-@inject ISnackbar Snackbar
-
 <title>Weather Forecast</title>
-<MudText Typo="Typo.h4" GutterBottom="true" Align="Align.Center">Weather Forecast</MudText>
-
 <MudContainer MaxWidth="MaxWidth.Medium" Class="mt-6">
     <MudPaper Class="pa-4" Elevation="3">
         <MudGrid Justify="Justify.SpaceBetween" Class="mb-4">
@@ -22,11 +16,12 @@
                                  Placeholder="Enter city"
                                  Adornment="Adornment.Start"
                                  AdornmentIcon="@Icons.Material.Filled.LocationCity"
-                                 AdornmentColor="Color.Primary"
-                                 IconSize="Size.Medium"
+                                 AdornmentColor="MudBlazor.Color.Primary"
+                                 IconSize="MudBlazor.Size.Medium"
                                  Immediate="true"
                                  ToStringFunc="(city) => city?.DisplayName"
                                  MinCharacters="2"
+                                 DebounceInterval="500"
                                  OnClearButtonClick="ClearSelectedCity"
                                  SearchFunc="@SearchCitySuggestions"
                                  Clearable="true"
@@ -34,19 +29,19 @@
             </MudItem>
             <MudItem xs="12" sm="4" Class="d-flex justify-end">
                 <MudButton OnClick="GetWeatherAsync"
-                           Disabled="@(SelectedCity == null || _weatherData.IsLoading)"
-                           Color="Color.Primary"
+                           Disabled="!CanFetchWeather()"
+                           Color="MudBlazor.Color.Primary"
                            Variant="Variant.Filled"
-                           Size="Size.Small"
+                           Size="MudBlazor.Size.Small"
                            Class="mx-2"
                            AriaLabel="Get Weather">
                     Get Weather
                 </MudButton>
                 <MudIconButton OnClick="GetWeatherByLocationAsync"
-                               Color="Color.Primary"
+                               Color="MudBlazor.Color.Primary"
                                Variant="Variant.Filled"
                                Icon="@Icons.Material.Filled.MyLocation"
-                               Size="Size.Large"
+                               Size="MudBlazor.Size.Large"
                                AriaLabel="Get Weather by Location" />
             </MudItem>
         </MudGrid>
@@ -59,9 +54,9 @@
         {
             <!-- Current Weather Section -->
             <MudPaper Class="pa-4 mt-5" Elevation="2">
-                <MudText Align="Align.Center" id="CityLabel" Typo="Typo.h5">@_weatherData.WeatherResponse.WeatherData.Name</MudText>
+                <MudText Align="MudBlazor.Align.Center" id="CityLabel" Typo="Typo.h5">@_weatherData.WeatherResponse.WeatherData.Name</MudText>
                 <MudStack Spacing="2" AlignItems="AlignItems.Center">
-                    <MudAvatar Size="Size.Large" Class="weather-icon">
+                    <MudAvatar Size="MudBlazor.Size.Large" Class="weather-icon">
                         <MudImage Src="@GetIconUrl(_weatherData.WeatherResponse.WeatherData.Weather?[0].Icon ?? "")" Alt="@_weatherData.WeatherResponse.WeatherData.Weather?[0].Description" />
                     </MudAvatar>
                     <MudText Typo="Typo.h6">@_weatherData.WeatherResponse.WeatherData.Main?.Temp.GetValueOrDefault().ToString("0")°F</MudText>
@@ -81,15 +76,11 @@
                                                Class="pa-2 forecast-card">
                                 <TitleContent>
                                     <MudStack Spacing="2" AlignItems="AlignItems.Center">
-                                        <!-- Weather Icon -->
-                                        <MudAvatar Size="Size.Medium" Class="weather-icon">
+                                        <MudAvatar Size="MudBlazor.Size.Medium" Class="weather-icon">
                                             <MudImage Src="@GetIconUrl(day.Value.Icon ?? "")" Alt="@day.Value.Details?[0].Weather?[0].Description" />
                                         </MudAvatar>
-                                        <!-- Date -->
-                                        <MudText Typo="Typo.subtitle1">@DateTime.Parse(day.Key).ToString("dddd MMM d")</MudText>
-                                        <!-- High Temperature -->
+                                        <MudText Typo="Typo.subtitle1">@DateTime.Parse(day.Key).ToString("ddd MMM d")</MudText>
                                         <MudText Typo="Typo.body2">High: @day.Value.High.GetValueOrDefault().ToString("0")°F</MudText>
-                                        <!-- Low Temperature -->
                                         <MudText Typo="Typo.body2">Low: @day.Value.Low.GetValueOrDefault().ToString("0")°F</MudText>
                                     </MudStack>
                                 </TitleContent>
@@ -106,7 +97,7 @@
                                                 <MudItem xs="12" sm="6" md="4" lg="6">
                                                     <MudPaper Class="pa-4" Elevation="2" Style="text-align: center; min-height: 250px;">
                                                         <MudStack Spacing="2" AlignItems="AlignItems.Center" JustifyContent="Center" Style="height: 100%;">
-                                                            <MudAvatar Size="Size.Medium">
+                                                            <MudAvatar Size="MudBlazor.Size.Medium">
                                                                 <MudImage Src="@GetIconUrl(hourly.Weather?[0]?.Icon ?? "")" Alt="@hourly.Weather?[0]?.Description" />
                                                             </MudAvatar>
                                                             <MudText Typo="Typo.caption">@DateTime.Parse(hourly.Dt_Txt ?? "").ToString("h:mm tt")</MudText>
@@ -127,146 +118,21 @@
 
             <!-- 5-Day Temperature Trend Chart -->
             <MudPaper Class="pa-4 mt-4" Elevation="2" Width="100%">
-                <MudText Typo="Typo.h6" GutterBottom="true">Temperature Trends for the Next 5 Days:</MudText>
-                <MudChart Width="100%" ChartType="ChartType.Line" XAxisLabels="@GetXAxisLabels()"
-                          ChartSeries="@GetTemperatureDataSets()">
-                </MudChart>
+                <ApexChart TItem="ChartModel" Title="Temperature Trends" Options="ChartOptions">
+                    <ApexPointSeries TItem="ChartModel"
+                                     Name="High Temp"
+                                     SeriesType="SeriesType.Line"
+                                     XValue="day => day.Date.ToShortDateString()"
+                                     YValue="day => (decimal)day.Temperature"
+                                     Items="HighTemps" />
+                    <ApexPointSeries TItem="ChartModel"
+                                     Name="Low Temp"
+                                     SeriesType="SeriesType.Line"
+                                     XValue="day => day.Date.ToShortDateString()"
+                                     YValue="day => (decimal)day.Temperature"
+                                     Items="LowTemps" />
+                </ApexChart>
             </MudPaper>
         }
     </MudPaper>
 </MudContainer>
-
-@code {
-    public CitySuggestion? SelectedCity { get; set; }
-    internal WeatherDataModel _weatherData = new WeatherDataModel();
-    internal const string WeatherIconBaseUrl = "https://openweathermap.org/img/wn/";
-    private string[]? Labels { get; set; }
-
-    protected override void OnInitialized()
-    {
-        // Populate the Labels array with the formatted dates from the weather data
-        Labels = _weatherData.WeatherResponse?.DailyForecasts?.Keys
-            .Select(key => DateTime.Parse(key).ToString("MMM d"))
-            .ToArray() ?? [];
-    }
-
-    private string[] GetXAxisLabels() => _weatherData.WeatherResponse?.DailyForecasts?.Keys
-            .Select(key => DateTime.Parse(key).ToString("MMM d"))
-            .ToArray() ?? [];
-
-    private void ClearSelectedCity()
-    {
-        SelectedCity = null;
-    }
-
-    private void OnInputTextChanged(string input)
-    {
-        if (string.IsNullOrWhiteSpace(input))
-        {
-            SelectedCity = null;
-        }
-    }
-
-    public async Task<IEnumerable<CitySuggestion?>>? SearchCitySuggestions(string value, CancellationToken cancellationToken)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            SelectedCity = null;
-            return [];
-        }
-
-        return await CitySuggestionService.GetCitySuggestionsAsync(value, cancellationToken);
-    }
-
-    private List<ChartSeries> GetTemperatureDataSets()
-    {
-        return new List<ChartSeries>
-        {
-            new ChartSeries { Name = "High Temp", Data = GetHighTempData() },
-            new ChartSeries { Name = "Low Temp", Data = GetLowTempData() }
-        };
-    }
-
-    public async Task GetWeatherAsync()
-    {
-        StartLoading();
-        try
-        {
-            if (SelectedCity is null)
-            {
-                DisplayError("Please select a city.");
-                return;
-            }
-
-            if (SelectedCity.Lng is null || SelectedCity.Lat is null)
-            {
-                DisplayError("Location not found.");
-                return;
-            }
-
-            _weatherData.WeatherResponse = await WeatherService.GetWeatherAsync(lat: double.Parse(SelectedCity.Lat), lon: double.Parse(SelectedCity.Lng));
-
-            ResetExpandedDay();
-        }
-        catch (Exception ex)
-        {
-            DisplayError($"An error occurred: {ex.Message}");
-        }
-        finally
-        {
-            StopLoading();
-        }
-    }
-
-    internal async Task GetWeatherByLocationAsync()
-    {
-        StartLoading();
-
-        try
-        {
-            // Call JavaScript to get the user's location (lat/lon)
-            var location = await JSRuntime.InvokeAsync<Location>("getUserLocation");
-
-            if (location.Latitude is null || location.Longitude is null)
-            {
-                DisplayError("Failed to retrieve location.");
-                return;
-            }
-
-            // Fetch weather data using the user's latitude and longitude
-            _weatherData.WeatherResponse = await WeatherService.GetWeatherAsync(lat: location.Latitude, lon: location.Longitude);
-
-            ResetExpandedDay();
-        }
-        catch (Exception ex)
-        {
-            DisplayError($"Failed to retrieve location: {ex.Message}");
-        }
-        finally
-        {
-            StopLoading();
-        }
-    }
-
-    private string GetPanelText(string dateKey, DailyForecast day)
-    {
-        var date = DateTime.Parse(dateKey).ToString("ddd d");
-        return $"{date} - High: {day.High.GetValueOrDefault().ToString("0")}°F, Low: {day.Low.GetValueOrDefault().ToString("0")}°F";
-    }
-
-    private void ToggleDay(string day) => _weatherData.ExpandedDay = _weatherData.ExpandedDay == day ? "" : day;
-
-    private string GetIconUrl(string icon) => $"{WeatherIconBaseUrl}{icon}.png";
-
-    private void StartLoading() => _weatherData.IsLoading = true;
-
-    private void StopLoading() => _weatherData.IsLoading = false;
-
-    private void ResetExpandedDay() => _weatherData.ExpandedDay = "";
-
-    private void DisplayError(string message) => _weatherData.ErrorMessage = message;
-
-    private double[] GetHighTempData() => _weatherData.WeatherResponse?.DailyForecasts?.Values.Select(forecast => Math.Round(forecast.High!.Value)).ToArray() ?? [];
-
-    private double[] GetLowTempData() => _weatherData.WeatherResponse?.DailyForecasts?.Values.Select(forecast => Math.Round(forecast.Low!.Value)).ToArray() ?? [];
-}

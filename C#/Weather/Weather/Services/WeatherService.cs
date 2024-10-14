@@ -3,7 +3,7 @@
     using Microsoft.AspNetCore.WebUtilities;
     using System.Globalization;
     using System.Text.Json;
-    using Weather.Models;
+    using Weather.Models.Weather;
 
     public interface IWeatherService
     {

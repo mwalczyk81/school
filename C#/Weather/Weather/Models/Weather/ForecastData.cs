@@ -1,4 +1,6 @@
-﻿namespace Weather.Models
+﻿using Weather.Models.Location;
+
+namespace Weather.Models.Weather
 {
     public record ForecastData
     {

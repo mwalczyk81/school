@@ -1,15 +1,17 @@
 ﻿@page "/HomeComponentTests"
 
+@using System.Threading
+@using NSubstitute
+@using Weather.Components.Pages
+@using Weather.Models
+@using Weather.Models.Location
+@using Weather.Models.Weather
 @using Bunit
 @using Microsoft.Extensions.DependencyInjection
 @using MudBlazor
 @using MudBlazor.Services
-@using Weather.Components.Pages
-@using Weather.Models
 @using Weather.Services
 @using Xunit
-@using NSubstitute
-@using System.Threading
 
 @code {
     private TestContext _testContext;
@@ -25,6 +27,26 @@
         _citySuggestionService = Substitute.For<ICitySuggestionService>();
         _jsRuntime = Substitute.For<IJSRuntime>();
         _snackbar = Substitute.For<ISnackbar>();
+
+        _jsRuntime.InvokeAsync<object>(Arg.Any<string>(), Arg.Any<object[]>())
+            .Returns(new ValueTask<object>(new object()));
+
+        _jsRuntime.InvokeAsync<string>(Arg.Any<string>(), Arg.Any<object[]>())
+            .Returns(new ValueTask<string>(""));
+
+        _jsRuntime.InvokeAsync<bool>(Arg.Any<string>(), Arg.Any<object[]>())
+            .Returns(new ValueTask<bool>(true));
+
+        _jsRuntime.InvokeAsync<int>(Arg.Any<string>(), Arg.Any<object[]>())
+            .Returns(new ValueTask<int>(1));
+
+        var jsObjectReference = Substitute.For<IJSObjectReference>();
+
+        jsObjectReference.InvokeAsync<object>(Arg.Any<string>(), Arg.Any<object[]>())
+                         .Returns(new ValueTask<object>(new object()));
+
+        _jsRuntime.InvokeAsync<IJSObjectReference>(Arg.Any<string>(), Arg.Any<object[]>())
+                  .Returns(new ValueTask<IJSObjectReference>(jsObjectReference));
 
         _testContext.Services.AddSingleton(_weatherService);
         _testContext.Services.AddSingleton(_citySuggestionService);
@@ -63,7 +85,7 @@
                 {
                     Name = "London",
                     Main = new Main { Temp = 60, Humidity = 80 },
-                    Weather = new List<Weather> { new Weather { Description = "Clear sky", Icon = "01d" } }.ToArray(),
+                    Weather = new List<WeatherItem> { new WeatherItem { Description = "Clear sky", Icon = "01d" } }.ToArray(),
                 },
                 DailyForecasts = new Dictionary<string, DailyForecast>
             {
@@ -95,7 +117,9 @@
         };
 
         _citySuggestionService.GetCitySuggestionsAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
-                   .Returns(await Task.FromResult<IEnumerable<CitySuggestion>>(citySuggestions!));
+         .Returns(Task.FromResult<IEnumerable<CitySuggestion>>(citySuggestions));
+
+
 
         var component = _testContext.RenderComponent<Home>();
 
