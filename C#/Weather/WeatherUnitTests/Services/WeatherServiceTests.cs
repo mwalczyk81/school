@@ -1,6 +1,8 @@
 ﻿namespace WeatherUnitTests.Services
 {
+    using FluentAssertions;
     using NSubstitute;
+    using NSubstitute.ExceptionExtensions;
     using System;
     using System.Net;
     using System.Net.Http;
@@ -21,45 +23,6 @@
             _httpClientFactory = Substitute.For<IHttpClientFactory>();
             _jsonSerializerOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             _weatherService = new WeatherService(_httpClientFactory, _jsonSerializerOptions);
-        }
-
-        [Fact]
-        public async Task GetWeatherAsync_WithCity_ReturnsWeatherResponse()
-        {
-            // Arrange
-            var city = "London";
-            var currentWeatherJson = "{\"main\": {\"temp\": 280.32}, \"weather\": [{\"icon\": \"10d\"}], \"name\": \"London\"}";
-            var forecastWeatherJson = "{\"city\": {\"timezone\": 0}, \"list\": [{\"dt_txt\": \"2023-10-01 12:00:00\", \"main\": {\"temp_max\": 285.32, \"temp_min\": 275.32}, \"weather\": [{\"icon\": \"10d\"}]}]}";
-
-            var currentWeatherResponse = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent(currentWeatherJson)
-            };
-
-            var forecastWeatherResponse = new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent(forecastWeatherJson)
-            };
-
-            var responses = new Dictionary<string, HttpResponseMessage>
-            {
-                { "weather?", currentWeatherResponse},
-                { "forecast?", forecastWeatherResponse}
-            };
-
-            var httpClient = Substitute.For<HttpClient>(new HttpMessageHandlerStub(responses));
-            httpClient.BaseAddress = new Uri("https://api.openweathermap.org/data/2.5/");
-
-            _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
-
-            // Act
-            var result = await _weatherService.GetWeatherAsync(city);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal("London", result.WeatherData?.Name);
-            Assert.NotNull(result.DailyForecasts);
-            Assert.Single(result.DailyForecasts);
         }
 
         [Fact]
@@ -93,29 +56,56 @@
             _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
 
             // Act
-            var result = await _weatherService.GetWeatherAsync(null, lat, lon);
+            var result = await _weatherService.GetWeatherAsync(lat, lon);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal("London", result.WeatherData?.Name);
-            Assert.NotNull(result.DailyForecasts);
-            Assert.Single(result.DailyForecasts);
+            result.Should().NotBeNull();
+            result!.WeatherData?.Name.Should().Be("London");
+            result.DailyForecasts.Should().NotBeNull().And.HaveCount(1);
         }
 
         [Fact]
-        public async Task GetWeatherAsync_WithoutCityOrLatLon_ThrowsArgumentException()
-        {
-            // Act & Assert
-            await Assert.ThrowsAsync<ArgumentException>(() => _weatherService.GetWeatherAsync());
-        }
-
-        [Fact]
-        public async Task GetWeatherAsync_WithInvalidCity_Throws()
+        public async Task GetWeatherAsync_WithNullLatitude_ThrowsArgumentNullExceptionAsync()
         {
             // Arrange
-            var city = "InvalidCity";
-            var currentWeatherResponse = new HttpResponseMessage(HttpStatusCode.NotFound);
-            var forecastWeatherResponse = new HttpResponseMessage(HttpStatusCode.NotFound);
+            double? lat = null;
+            double? lon = -0.1278;
+
+            // Act & Assert
+            Func<Task> action = async () => await _weatherService.GetWeatherAsync(lat, lon);
+            await action.Should().ThrowAsync<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GetWeatherAsync_WithNullLongitude_ThrowsArgumentNullException()
+        {
+            // Arrange
+            double? lat = 51.5074;
+            double? lon = null;
+
+            // Act & Assert
+            Action action = async () => await _weatherService.GetWeatherAsync(lat, lon);
+            action.Should().Throws<ArgumentNullException>();
+        }
+
+        [Fact]
+        public async Task GetWeatherAsync_WithEmptyForecastData_ReturnsNull()
+        {
+            // Arrange
+            var lat = 51.5074;
+            var lon = -0.1278;
+            var currentWeatherJson = "{\"main\": {\"temp\": 280.32}, \"weather\": [{\"icon\": \"10d\"}], \"name\": \"London\"}";
+            var forecastWeatherJson = "{\"city\": {\"timezone\": 0}, \"list\": []}";
+
+            var currentWeatherResponse = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(currentWeatherJson)
+            };
+
+            var forecastWeatherResponse = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(forecastWeatherJson)
+            };
 
             var responses = new Dictionary<string, HttpResponseMessage>
             {
@@ -128,15 +118,58 @@
 
             _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<HttpRequestException>(() => _weatherService.GetWeatherAsync(city));
+            // Act
+            var result = await _weatherService.GetWeatherAsync(lat, lon);
+
+            // Assert
+            result?.WeatherData.Should().NotBeNull();
+            result?.DailyForecasts.Should().BeEmpty();
         }
 
         [Fact]
-        public async Task GetWeatherAsync_WithApiError_ThrowsHttpRequestException()
+        public async Task GetWeatherAsync_WithEmptyCurrentWeatherData_ReturnsNull()
         {
             // Arrange
-            var city = "London";
+            var lat = 51.5074;
+            var lon = -0.1278;
+            var currentWeatherJson = "{}";
+            var forecastWeatherJson = "{\"city\": {\"timezone\": 0}, \"list\": [{\"dt_txt\": \"2023-10-01 12:00:00\", \"main\": {\"temp_max\": 285.32, \"temp_min\": 275.32}, \"weather\": [{\"icon\": \"10d\"}]}]}";
+
+            var currentWeatherResponse = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(currentWeatherJson)
+            };
+
+            var forecastWeatherResponse = new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(forecastWeatherJson)
+            };
+
+            var responses = new Dictionary<string, HttpResponseMessage>
+            {
+                { "weather?", currentWeatherResponse},
+                { "forecast?", forecastWeatherResponse}
+            };
+
+            var httpClient = Substitute.For<HttpClient>(new HttpMessageHandlerStub(responses));
+            httpClient.BaseAddress = new Uri("https://api.openweathermap.org/data/2.5/");
+
+            _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
+
+            // Act
+            var result = await _weatherService.GetWeatherAsync(lat, lon);
+
+            // Assert
+            result?.WeatherData?.Weather.Should().BeNullOrEmpty();
+            result?.DailyForecasts.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task GetWeatherAsync_WithHttpRequestFailure_ThrowsHttpRequestExceptionAsync()
+        {
+            // Arrange
+            var lat = 51.5074;
+            var lon = -0.1278;
             var currentWeatherResponse = new HttpResponseMessage(HttpStatusCode.InternalServerError);
             var forecastWeatherResponse = new HttpResponseMessage(HttpStatusCode.InternalServerError);
 
@@ -152,7 +185,8 @@
             _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
 
             // Act & Assert
-            await Assert.ThrowsAsync<HttpRequestException>(() => _weatherService.GetWeatherAsync(city));
+            Func<Task> action = async () => await _weatherService.GetWeatherAsync(lat, lon);
+            await action.Should().ThrowAsync<HttpRequestException>();
         }
     }
 }

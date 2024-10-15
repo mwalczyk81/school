@@ -15,6 +15,7 @@ namespace Weather.Components.Pages
         [Inject] private ICitySuggestionService CitySuggestionService { get; set; } = default!;
         [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
         [Inject] private ISnackbar Snackbar { get; set; } = default!;
+        [Inject] private IDialogService DialogService { get; set; } = default!;
 
         public CitySuggestion? SelectedCity { get; set; }
         internal WeatherDataModel _weatherData = new();
@@ -26,6 +27,16 @@ namespace Weather.Components.Pages
         protected override void OnInitialized()
         {
             ConfigureChartOptions();
+        }
+
+        private void OpenWeatherDetail(string dayName, IEnumerable<ForecastItem> hourlyDetails)
+        {
+            var options = new DialogOptions { CloseOnEscapeKey = true };
+            DialogService.Show<WeatherDetail>(null, new DialogParameters
+            {
+                { "DayName", dayName },
+                { "HourlyDetails", hourlyDetails }
+            }, options);
         }
 
         private void ClearSelectedCity()
@@ -60,7 +71,7 @@ namespace Weather.Components.Pages
                 return;
             }
 
-            await FetchWeatherData(() => WeatherService.GetWeatherAsync(null, double.Parse(SelectedCity.Lat), double.Parse(SelectedCity.Lng)));
+            await FetchWeatherData(() => WeatherService.GetWeatherAsync(double.Parse(SelectedCity.Lat), double.Parse(SelectedCity.Lng)));
         }
 
         public async Task GetWeatherByLocationAsync()
@@ -72,7 +83,7 @@ namespace Weather.Components.Pages
                 return;
             }
 
-            await FetchWeatherData(() => WeatherService.GetWeatherAsync(null, location.Latitude.Value, location.Longitude.Value));
+            await FetchWeatherData(() => WeatherService.GetWeatherAsync(location.Latitude.Value, location.Longitude.Value));
         }
 
         private async Task FetchWeatherData(Func<Task<WeatherResponse?>> fetchWeatherTask)
@@ -105,10 +116,7 @@ namespace Weather.Components.Pages
             {
                 _weatherData.IsLoading = false;
 
-                if (JSRuntime != null)
-                {
-                    await InvokeAsync(StateHasChanged);
-                }
+                await InvokeAsync(StateHasChanged);
             }
         }
 

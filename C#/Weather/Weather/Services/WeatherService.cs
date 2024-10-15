@@ -7,7 +7,7 @@
 
     public interface IWeatherService
     {
-        Task<WeatherResponse?> GetWeatherAsync(string? city = null, double? lat = null, double? lon = null);
+        Task<WeatherResponse?> GetWeatherAsync(double? lat, double? lon);
     }
 
     public class WeatherService(IHttpClientFactory httpClientFactory, JsonSerializerOptions jsonSerializerOptions) : IWeatherService
@@ -16,34 +16,29 @@
         private readonly JsonSerializerOptions _jsonSerializerOptions = jsonSerializerOptions;
         private const string ApiKey = "906b6939735602a519447e37a839d229";
 
-        public async Task<WeatherResponse?> GetWeatherAsync(string? city = null, double? lat = null, double? lon = null)
+        public async Task<WeatherResponse?> GetWeatherAsync(double? lat, double? lon)
         {
+            if (lat is null)
+            {
+                throw new ArgumentNullException(nameof(lat));
+            }
+
+            if (lon is null)
+            {
+                throw new ArgumentNullException(nameof(lon));
+            }
+
             string currentUrl, forecastUrl;
             var queryParams = new Dictionary<string, string?>
-                {
-                    { "appid", ApiKey },
-                    { "units", "imperial" }
-                };
-
-            if (!string.IsNullOrEmpty(city))
             {
-                queryParams.Add("q", city);
+                { "appid", ApiKey },
+                { "units", "imperial" },
+                { "lat", lat.Value.ToString() },
+                { "lon", lon.Value.ToString() }
+            };
 
-                currentUrl = QueryHelpers.AddQueryString("weather", queryParams);
-                forecastUrl = QueryHelpers.AddQueryString("forecast", queryParams);
-            }
-            else if (lat.HasValue && lon.HasValue)
-            {
-                queryParams.Add("lat", lat.Value.ToString());
-                queryParams.Add("lon", lon.Value.ToString());
-
-                currentUrl = QueryHelpers.AddQueryString("weather", queryParams);
-                forecastUrl = QueryHelpers.AddQueryString("forecast", queryParams);
-            }
-            else
-            {
-                throw new ArgumentException("Location or city must be provided");
-            }
+            currentUrl = QueryHelpers.AddQueryString("weather", queryParams);
+            forecastUrl = QueryHelpers.AddQueryString("forecast", queryParams);
 
             var currentWeather = await FetchDataAsync<WeatherData>(currentUrl);
             var forecastWeather = await FetchDataAsync<ForecastData>(forecastUrl);

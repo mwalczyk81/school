@@ -12,6 +12,7 @@
 @using MudBlazor.Services
 @using Weather.Services
 @using Xunit
+@using FluentAssertions
 
 @code {
     private TestContext _testContext;
@@ -65,7 +66,7 @@
         var title = component.Find("title");
 
         // Assert
-        Assert.Equal("Weather Forecast", title.InnerHtml);
+        title.InnerHtml.Should().Be("Weather Forecast");    
     }
 
     [Fact]
@@ -93,7 +94,7 @@
             }
             };
 
-        _weatherService.GetWeatherAsync(Arg.Any<string>(), Arg.Any<double>(), Arg.Any<double>()).Returns(await Task.FromResult(weatherResponse));
+        _weatherService.GetWeatherAsync(Arg.Any<double>(), Arg.Any<double>()).Returns(await Task.FromResult(weatherResponse));
 
         var component = _testContext.RenderComponent<Home>();
 
@@ -104,7 +105,7 @@
         // Assert
         component.Render();
         var weatherText = component.Find("#CityLabel");
-        Assert.Equal("London", weatherText.InnerHtml);
+        weatherText.InnerHtml.Should().Be("London");
     }
 
     [Fact]
@@ -127,8 +128,7 @@
         var suggestions = await component.Instance.SearchCitySuggestions("Lon", CancellationToken.None)!;
 
         // Assert
-        Assert.NotNull(suggestions);
-        Assert.Single(suggestions);
-        Assert.Equal("London, England, United Kingdom", suggestions.First()?.DisplayName);
+        suggestions.Should().NotBeNull().And.HaveCount(1);
+        suggestions!.First()?.DisplayName.Should().Be("London, England, United Kingdom");
     }
 }

@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeatherUnitTests", "Weather
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E752280F-F040-429C-A827-D93068967CB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherUIUnitTests", "WeatherUIUnitTests\WeatherUIUnitTests.csproj", "{57B9A008-E748-4EE1-98A6-F4C2966D2ACA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeatherUIUnitTests", "WeatherUIUnitTests\WeatherUIUnitTests.csproj", "{57B9A008-E748-4EE1-98A6-F4C2966D2ACA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

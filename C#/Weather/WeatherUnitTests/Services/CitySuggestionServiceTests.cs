@@ -6,6 +6,7 @@ using Weather.Services;
 
 namespace WeatherUnitTests.Services
 {
+    using FluentAssertions;
     using System;
     using System.Linq;
     using System.Net.Http;
@@ -79,7 +80,7 @@ namespace WeatherUnitTests.Services
             var result = await _citySuggestionService.GetCitySuggestionsAsync(input, CancellationToken.None);
 
             // Assert
-            Assert.Empty(result);
+            result.Should().BeEmpty();
             _logger.Received().LogWarning("No input to search for.");
         }
 
@@ -100,7 +101,8 @@ namespace WeatherUnitTests.Services
             _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
 
             // Act & Assert
-            await Assert.ThrowsAsync<HttpRequestException>(() => _citySuggestionService.GetCitySuggestionsAsync(input, CancellationToken.None));
+            Func<Task> action = async () => await _citySuggestionService.GetCitySuggestionsAsync(input, CancellationToken.None);
+            await action.Should().ThrowAsync<HttpRequestException>();
         }
 
         [Fact]
@@ -124,7 +126,7 @@ namespace WeatherUnitTests.Services
             var result = await _citySuggestionService.GetCitySuggestionsAsync(input, CancellationToken.None);
 
             // Assert
-            Assert.Empty(result);
+            result.Should().BeEmpty();
             _logger.Received().LogError("No city names returned.");
         }
     }
