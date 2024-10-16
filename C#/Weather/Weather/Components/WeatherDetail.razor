@@ -1,4 +1,5 @@
 ﻿@using Weather.Models.Weather
+@using MudBlazor
 
 @inject IDialogService DialogService
 
@@ -73,5 +74,5 @@
 
     private void CloseDialog() => MudDialog?.Close();
 
-    private string GetIconUrl(string icon) => $"https://openweathermap.org/img/wn/{icon}.png";
+    private string GetIconUrl(string icon) => $"{Constants.Weather.WeatherIconBaseUrl}{icon}.png";
 }

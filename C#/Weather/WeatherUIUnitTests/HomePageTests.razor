@@ -3,7 +3,6 @@
 @using System.Threading
 @using NSubstitute
 @using Weather.Components.Pages
-@using Weather.Models
 @using Weather.Models.Location
 @using Weather.Models.Weather
 @using Bunit
@@ -21,7 +20,7 @@
     private IJSRuntime _jsRuntime;
     private ISnackbar _snackbar;
 
-    public HomeComponentTests()
+    public HomePageTests()
     {
         _testContext = new TestContext();
         _weatherService = Substitute.For<IWeatherService>();
