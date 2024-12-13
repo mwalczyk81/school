@@ -76,14 +76,22 @@ namespace Weather.Components.Pages
 
         public async Task GetWeatherByLocationAsync()
         {
-            var location = await JSRuntime.InvokeAsync<LocationItem>("getUserLocation");
-            if (location?.Latitude == null || location?.Longitude == null)
+            try
             {
-                DisplayError("Failed to retrieve location.");
-                return;
-            }
+                var location = await JSRuntime.InvokeAsync<LocationItem>("getUserLocation");
 
-            await FetchWeatherData(() => WeatherService.GetWeatherAsync(location.Latitude.Value, location.Longitude.Value));
+                if (location?.Latitude == null || location?.Longitude == null)
+                {
+                    DisplayError("Failed to retrieve location.");
+                    return;
+                }
+
+                await FetchWeatherData(() => WeatherService.GetWeatherAsync(location.Latitude.Value, location.Longitude.Value));
+            }
+            catch (Exception ex)
+            {
+                DisplayError($"There was a problem retrieving your location. {ex.Message}");
+            }
         }
 
         private async Task FetchWeatherData(Func<Task<WeatherResponse?>> fetchWeatherTask)

@@ -1,7 +1,5 @@
 using MudBlazor;
 using MudBlazor.Services;
-using Polly;
-using Polly.Extensions.Http;
 using System.Text.Json;
 using Weather.Components;
 using Weather.Services;
@@ -16,13 +14,13 @@ builder.Services.AddHttpClient<IWeatherService, WeatherService>("Weather", clien
 {
     client.Timeout = TimeSpan.FromSeconds(10);
     client.BaseAddress = new Uri("https://api.openweathermap.org/data/2.5/");
-}).AddResilienceHandler("RetryPipline", (p, c) => GetRetryPolicy());
+}).AddStandardResilienceHandler();
 
 builder.Services.AddHttpClient<ICitySuggestionService, CitySuggestionService>("Cities", client =>
 {
     client.Timeout = TimeSpan.FromSeconds(10);
-    client.BaseAddress = new Uri("http://api.geonames.org/searchJSON");
-}).AddResilienceHandler("RetryPipline", (p, c) => GetRetryPolicy());
+    client.BaseAddress = new Uri("http://api.geonames.org/");
+}).AddStandardResilienceHandler();
 
 builder.Services.AddSingleton(new JsonSerializerOptions
 {
@@ -62,10 +60,3 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
-
-static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
-{
-    return HttpPolicyExtensions
-        .HandleTransientHttpError()
-        .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
-}
